@@ -1,0 +1,2 @@
+# distributed_redis_server
+使用一致性hash实现python falsk版的分布式redis 服务端
