@@ -1,0 +1,29 @@
+# 配置实例,请按需设置
+core:
+  # 是否开启debug模式
+  DEBUG: True
+
+  # 发送邮件的 服务器邮箱账号
+  SMTP_ACCOUNT: "xxx@163.com"
+  # 密码
+  SMTP_PASSWORD: "xxx"
+  # 邮箱服务host
+  SMTP_HOST: "smtp.163.com"
+  # 邮箱服务端口
+  SMTP_PORT: 465
+  # 被发送(管理员)邮箱账号
+  SEND_EMAIL: "xxx@qq.com"
+
+  # 一致性hash 真实节点对应 虚拟节点个数
+  VNODE_REPLICAS: 5
+
+# Log日志系统
+log:
+  logging_info_file: '/xxx/log/info.log'
+  logging_error_file: '/xxx/log/error.log'
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  pass:
+  db: 1
