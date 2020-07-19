@@ -8,6 +8,7 @@ Usage:
 
 """
 import os
+
 # 3p
 import yaml
 
@@ -60,6 +61,14 @@ def get_conf(path=""):
         raise FileNotFoundError("Config file not found in path: %s" % path)
 
     return yaml.safe_load(open(path, "r", encoding="utf-8").read())
+
+
+def get_core_config():
+    """
+    获取core中的配置
+    :return:
+    """
+    return get_conf().get("core")
 
 
 def path_exists(_path):

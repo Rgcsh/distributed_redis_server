@@ -8,10 +8,10 @@ Usage:
 
 """
 import yagmail as yagmail
-from flask import current_app
 
 from app.controllers.node.remove import NodeRemoveController
 from app.core import logger, scheduler
+from app.utils import get_core_config
 from app.utils.redis_action import get_hash_ring_map, get_redis_obj, check_redis_status
 
 
@@ -47,11 +47,12 @@ def send_email(error_list):
     :return:
     """
     logger.info(f'开始发送邮件:{error_list}')
-    smtp_account = current_app.config.get("SMTP_ACCOUNT")
-    smtp_password = current_app.config.get("SMTP_PASSWORD")
-    smtp_host = current_app.config.get("SMTP_HOST")
-    smtp_port = current_app.config.get("SMTP_PORT")
-    send_email = current_app.config.get("SEND_EMAIL")
+    config = get_core_config()
+    smtp_account = config.get("SMTP_ACCOUNT")
+    smtp_password = config.get("SMTP_PASSWORD")
+    smtp_host = config.get("SMTP_HOST")
+    smtp_port = config.get("SMTP_PORT")
+    send_email = config.get("SEND_EMAIL")
     contents = ["尊敬的管理员:", str(error_list)]
     yag = yagmail.SMTP(smtp_account, smtp_password, host=smtp_host, port=smtp_port)
     yag.send(send_email, "您在接收邮件", contents)
