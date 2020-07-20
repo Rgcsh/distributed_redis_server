@@ -1,0 +1,42 @@
+version: "3.7"
+# 注意:挂载的文件夹需要 在 docker-Preferences-File Sharing 里面进行添加，否则无效
+# 命令总结：
+# 后台启动docker:  docker-compose -f ./docker-compose.yml up -d
+# 进入容器:  docker exec -it mysql-local /bin/bash
+services:
+
+  redis_1:
+    image: redis:5.0.7
+    container_name: redis_1
+    volumes:
+      # 设置 数据 挂载
+      - ./redis/data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    privileged: true
+    ports:
+      - 6380:6379
+
+  redis_2:
+    image: redis:5.0.7
+    container_name: redis_2
+    volumes:
+      # 设置 数据 挂载
+      - ./redis/data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    privileged: true
+    ports:
+      - 6381:6379
+
+  redis_3:
+    image: redis:5.0.7
+    container_name: redis_3
+    volumes:
+      # 设置 数据 挂载
+      - ./redis/data:/data
+    command: redis-server --appendonly yes
+    restart: always
+    privileged: true
+    ports:
+      - 6382:6379
