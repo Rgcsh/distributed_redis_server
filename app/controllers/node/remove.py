@@ -11,9 +11,8 @@ Usage:
 from app.controllers.base import BaseController
 from app.core import logger, redis
 from app.libs.pre_request import Rule, pre
-from app.utils import json_success, json_fail, HASH_RING_MAP, str2byte
+from app.utils import json_success, json_fail, HASH_RING_MAP, RedisAction
 from .base import api
-from ...utils.redis_action import get_hash_ring_map
 
 request_upsert_rules = {
     "host": Rule(direct_type=str, allow_empty=False),
@@ -33,8 +32,9 @@ class NodeRemoveController(BaseController):
         POST: /node/remove
         """
         node_url = f"{params['host']}:{params['port']}/{params['db']}"
-        logger.info("判断节点 IP 是否重复")
-        hash_ring_map = get_hash_ring_map()
+
+        logger.info("判断节点 IP 是否存在")
+        hash_ring_map = RedisAction.get_hash_ring_map()
         real_node_list = list(set(hash_ring_map.values()))
         if node_url not in str(real_node_list):
             return json_fail(message='node不存在')
@@ -60,4 +60,5 @@ class NodeRemoveController(BaseController):
 
         logger.info(f'覆盖添加 new_hash_ring_map:{new_hash_ring_map}')
         redis.delete(HASH_RING_MAP)
-        redis.hmset(HASH_RING_MAP, new_hash_ring_map)
+        if new_hash_ring_map:
+            redis.hmset(HASH_RING_MAP, new_hash_ring_map)

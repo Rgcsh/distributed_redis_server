@@ -7,6 +7,8 @@ create time '2020/7/6 09:09'
 Usage:
 
 """
+# 一致性hash算法
+from .consistency_hash import *
 # 常量
 from .constant import *
 # JSON编码处理
@@ -21,6 +23,8 @@ from .messages import *
 from .path import *
 # 数据转换
 from .pickles import *
+# redis操作
+from .redis_action import RedisAction
 # 响应处理
 from .response import *
 # 加密相关

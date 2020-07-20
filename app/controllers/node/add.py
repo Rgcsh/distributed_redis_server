@@ -12,10 +12,8 @@ from flask import current_app
 from app.controllers.base import BaseController
 from app.core import logger, redis
 from app.libs.pre_request import Rule, pre
-from app.utils import json_success, json_fail, HASH_RING_MAP
+from app.utils import json_success, json_fail, HASH_RING_MAP, ConsistencyHash, RedisAction
 from .base import api
-from ...utils.consistency_hash import ConsistencyHash
-from ...utils.redis_action import url_format, get_redis_obj, check_redis_status, get_hash_ring_map
 
 request_upsert_rules = {
     "host": Rule(direct_type=str, allow_empty=False),
@@ -38,17 +36,17 @@ class NodeAddController(BaseController):
         host = params['host']
         port = params['port']
         replicas = current_app.config.get('VNODE_REPLICAS') or 5
-        new_node = url_format(**params)
+        new_node = RedisAction.url_format(**params)
 
         logger.info("判断节点 host:port 是否重复")
-        hash_ring_map = get_hash_ring_map()
+        hash_ring_map = RedisAction.get_hash_ring_map()
         real_node_list = list(set(hash_ring_map.values()))
         if real_node_list and f'{host}:{port}' in str(real_node_list):
             return json_fail(message='节点已存在')
 
         logger.info('检查节点能否使用')
-        node_redis = get_redis_obj(**params)
-        check_result, _str = check_redis_status(node_redis)
+        node_redis = RedisAction.get_redis_obj(**params)
+        check_result, _str = RedisAction.check_redis_status(node_redis)
         if not check_result:
             return json_fail(message=f'节点无法连接:{_str}')
 

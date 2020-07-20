@@ -11,8 +11,7 @@ import yagmail as yagmail
 
 from app.controllers.node.remove import NodeRemoveController
 from app.core import logger, scheduler
-from app.utils import get_core_config
-from app.utils.redis_action import get_hash_ring_map, get_redis_obj, check_redis_status
+from app.utils import get_core_config, RedisAction
 
 
 @scheduler.task('interval', id='corn_get_data', seconds=10)
@@ -24,14 +23,14 @@ def corn_check_node():
     几次不行之后 则 从集群中移除节点,并发送邮件给管理员
     """
     logger.info('corn_check_node job start executed!!!!')
-    hash_ring_map = get_hash_ring_map()
+    hash_ring_map = RedisAction.get_hash_ring_map()
     real_node_list = list(set(hash_ring_map.values()))
     error_list = []
 
     logger.info(f'开始检查:{real_node_list}')
     for node in real_node_list:
-        redis_obj = get_redis_obj(node)
-        status, message = check_redis_status(redis_obj)
+        redis_obj = RedisAction.get_redis_obj(node)
+        status, message = RedisAction.check_redis_status(redis_obj)
         if not status:
             NodeRemoveController.remove_node(node, hash_ring_map)
             error_list.append(f'节点:{node} 连接失败,原因:{message}')
