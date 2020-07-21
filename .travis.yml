@@ -8,20 +8,12 @@ env:
   - CONFIG_NAME=config_test.yml
 
 install:
-  - pip install -r requirements.txt
+  - pip install -r -q requirements.txt
   - pip install coveralls
 
 script:
   - pylint --rcfile=pylint.conf app
   - coverage run -m pytest -p no:warnings
-
-deploy:
-  provider: pypi
-  user: __token__
-  password: ${REQTOKEN}
-  skip_cleanup: true
-  on:
-    python: 3.6
 
 after_script:
   - coveralls
