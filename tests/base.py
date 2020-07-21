@@ -13,7 +13,9 @@ from app import create_app
 from app.core import redis
 from app.utils import HASH_RING_MAP
 
-os.environ['FLASK_CONFIG'] = '/Users/rgc/project/distributed_redis_server/config/config_local.yml'
+# 设置配置的文件名
+config_path = 'config_local.yml'
+os.environ['FLASK_CONFIG'] = os.path.dirname(os.path.dirname(__file__)) + '/config/' + config_path
 
 # 测试全局共用一个app
 app = create_app()
