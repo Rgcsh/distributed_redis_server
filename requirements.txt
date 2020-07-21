@@ -4,6 +4,7 @@ astroid==2.4.2
 attrs==19.3.0
 bson==0.5.10
 click==7.1.2
+coverage==5.2
 Flask==1.1.2
 Flask-APScheduler==1.11.0
 Flask-Cors==3.0.8
