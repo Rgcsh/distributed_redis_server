@@ -15,5 +15,5 @@ script:
   - pylint --rcfile=pylint.conf app
   - coverage run -m pytest -p no:warnings
 
-after_script:
-  - coveralls
+#after_script:
+#  - coveralls
