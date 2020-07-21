@@ -341,7 +341,15 @@ def judge_month(input_data: str):
 #     return decorator
 
 
-def time_out(fn, *args, **kwargs):
+def time_out(fn, *args, **kwargs):  # pylint:disable=unused-argument
+    """
+    超时的装饰器
+    :param fn:
+    :param args:
+    :param kwargs:
+    :return:
+    """
+
     def wrapper(*args, **kwargs):
         try:
             result = fn(*args, **kwargs)

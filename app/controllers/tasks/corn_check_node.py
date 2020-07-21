@@ -7,7 +7,7 @@ create time '2020/7/6 14:48'
 Usage:
 
 """
-import yagmail as yagmail
+import yagmail
 
 from app.controllers.node.remove import NodeRemoveController
 from app.core import logger, scheduler
@@ -51,7 +51,7 @@ def send_email(error_list):
     smtp_password = config.get("SMTP_PASSWORD")
     smtp_host = config.get("SMTP_HOST")
     smtp_port = config.get("SMTP_PORT")
-    send_email = config.get("SEND_EMAIL")
+    send_user = config.get("SEND_EMAIL")
     contents = ["尊敬的管理员:", str(error_list)]
     yag = yagmail.SMTP(smtp_account, smtp_password, host=smtp_host, port=smtp_port)
-    yag.send(send_email, "您在接收邮件", contents)
+    yag.send(send_user, "您在接收邮件", contents)

@@ -1,0 +1,25 @@
+core:
+  # 是否开启debug模式
+  DEBUG: True
+  cache_type: redis
+  cache_prefix: 'redis_server:'
+
+  SMTP_ACCOUNT: "xxx@163.com"
+  SMTP_PASSWORD: "xxx"
+  SMTP_HOST: "smtp.163.com"
+  SMTP_PORT: 465
+  SEND_EMAIL: "xxx@qq.com"
+
+  # 一致性hash 真实节点对应 虚拟节点个数
+  VNODE_REPLICAS: 5
+
+# Log日志系统
+log:
+  logging_info_file: '/tmp/log/info.log'
+  logging_error_file: '/tmp/log/error.log'
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  pass:
+  db: 13

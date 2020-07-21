@@ -11,6 +11,7 @@ from zlib import crc32
 
 
 class ConsistencyHash(object):
+    """一致性hash类"""
     def __init__(self, nodes=None, replicas=None):
         """
 
@@ -24,6 +25,11 @@ class ConsistencyHash(object):
         self.add_nodes(nodes)
 
     def _add_node(self, node):
+        """
+        添加节点 内部方法
+        :param node:
+        :return:
+        """
         for i in range(self.replicas):
             bnode = "%s_vnode%s" % (node, i)
             bnode = bytes(bnode, encoding="utf8")
@@ -35,6 +41,11 @@ class ConsistencyHash(object):
             self.nodes.append(node)
 
     def add_nodes(self, nodes):
+        """
+        添加节点
+        :param nodes:
+        :return:
+        """
         if nodes:
             for node in nodes:
                 self._add_node(node)
@@ -55,4 +66,8 @@ class ConsistencyHash(object):
 
     @property
     def node_info(self):
+        """
+        获取 环形hash的dict数据
+        :return:
+        """
         return self.ring
