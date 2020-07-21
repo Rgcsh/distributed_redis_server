@@ -10,6 +10,7 @@ Module usage:
 # pylint: disable=wrong-import-position,redefined-outer-name
 
 import pytest
+from redis import Redis
 
 from app.utils import RedisAction
 from app.utils.timer import current_time
@@ -31,4 +32,21 @@ def mock_redis_status(monkeypatch):
     def mock_check_redis_status(*args, **kwargs):
         return True, ''
 
+    def mock_get_hash_ring_map(*args, **kwargs):
+        return {}
+
+    def mock_redis_delete(*args, **kwargs):
+        return True
+
+    def mock_redis_hmset(*args, **kwargs):
+        return True
+
+    def mock_redis_hgetall(*args, **kwargs):
+        return {}
+
     monkeypatch.setattr(RedisAction, 'check_redis_status', mock_check_redis_status)
+    monkeypatch.setattr(RedisAction, 'get_hash_ring_map', mock_get_hash_ring_map)
+
+    monkeypatch.setattr(Redis, 'delete', mock_redis_delete)
+    monkeypatch.setattr(Redis, 'hmset', mock_redis_hmset)
+    monkeypatch.setattr(Redis, 'hgetall', mock_redis_hgetall)
