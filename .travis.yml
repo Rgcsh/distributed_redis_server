@@ -4,11 +4,15 @@ dist: xenial
 
 python: "3.6"
 
+env:
+  - CONFIG_NAME=config_test.yml
+
 install:
   - pip install -r requirements.txt
   - pip install coveralls
 
 script:
+  - pylint --rcfile=pylint.conf app
   - pytest -p no:warnings
   - coverage run -m pytest -p no:warnings
 

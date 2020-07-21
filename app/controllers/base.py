@@ -6,6 +6,7 @@ create time '2019/9/17 10:18'
 """
 import traceback
 
+# pylint:disable=wrong-import-order
 import redis
 from flask_restful import Api, Resource
 

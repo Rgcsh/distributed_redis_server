@@ -19,7 +19,7 @@ from .transform import byte2str
 
 
 class RedisAction:
-
+    """redis操作类"""
     @staticmethod
     def url_format(*args, **kwargs):
         """
