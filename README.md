@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/Rgcsh/distributed_redis_server/badge.svg?branch=master)](https://coveralls.io/github/Rgcsh/distributed_redis_server?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Rgcsh/distributed_redis_server/badge.svg)](https://coveralls.io/github/Rgcsh/distributed_redis_server)
 
 # 项目描述
 * 通过一致性hash 实现python flask版的分布式缓存系统 的服务端
