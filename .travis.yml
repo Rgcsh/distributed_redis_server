@@ -8,7 +8,7 @@ env:
   - CONFIG_NAME=config_test.yml
 
 install:
-  - pip install -r -q requirements.txt
+  - pip install -q -r requirements.txt
   - pip install coveralls
 
 script:
