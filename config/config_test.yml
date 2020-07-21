@@ -15,8 +15,8 @@ core:
 
 # Log日志系统
 log:
-  logging_info_file: '/tmp/log/info.log'
-  logging_error_file: '/tmp/log/error.log'
+  logging_info_file: 'info.log'
+  logging_error_file: 'error.log'
 
 redis:
   host: 127.0.0.1
