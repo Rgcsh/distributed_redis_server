@@ -60,16 +60,3 @@ class TestNodeAdd(TestBase):
 
         # 节点冲突
         self.send_request(self.path, self.params, 200, 'post', test_id="1.0")
-
-        copy_params = deepcopy(self.params)
-        copy_params['db'] = 15
-        self.send_request(self.path, copy_params, 500, 'post', test_id="2.5")
-
-    def test_not_connect(self):
-        """
-        测试节点无法连接
-        :return:
-        """
-        copy_params = deepcopy(self.params)
-        copy_params['port'] = 6390
-        self.send_request(self.path, copy_params, 500, 'post', test_id="2.4")

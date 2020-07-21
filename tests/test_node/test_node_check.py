@@ -27,10 +27,3 @@ class TestNodeCheck(TestBase):
         """
         TestNodeAdd().test_normal(mock_redis_status)
         self.send_request(self.path, self.params, 200, 'post', test_id="1.0")
-
-    def test_not_connect(self):
-        """
-        测试节点无法连接
-        :return:
-        """
-        self.send_request(self.path, self.params, 200, 'post', test_id="2.0")
