@@ -13,7 +13,6 @@ install:
 
 script:
   - pylint --rcfile=pylint.conf app
-  - pytest -p no:warnings
   - coverage run -m pytest -p no:warnings
 
 deploy:

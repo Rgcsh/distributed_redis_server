@@ -10,8 +10,6 @@ Module usage:
 import os
 
 from app import create_app
-from app.core import redis
-from app.utils import HASH_RING_MAP
 
 # 设置配置的文件名
 config_path = os.environ.get('CONFIG_NAME') or 'config_test.yml'
