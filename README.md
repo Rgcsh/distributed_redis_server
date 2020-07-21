@@ -18,12 +18,15 @@
 # 系统架构
 ![系统架构](docs/img/architecture.jpg)
 
+# 一致性hash+虚拟节点 算法介绍
+![一致性hash](docs/img/hash.jpg)
+* [一致性hash相关原理介绍](https://blog.csdn.net/cywosp/article/details/23397179/)
+
 # 测试
 * 所需要的 节点redis 通过项目根目录的 docker-compose.yml 来生成
 
 # 将来要实现功能
 * 前端页面 对集群信息进行展示,对节点进行各种操作
-* 添加测试用例
 
 # 运行步骤
 * 新建虚拟环境,并进入虚拟环境 
