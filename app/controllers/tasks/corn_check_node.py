@@ -7,25 +7,28 @@ create time '2020/7/6 14:48'
 Usage:
 
 """
-import yagmail
 
 from app.controllers.node.remove import NodeRemoveController
 from app.core import logger, scheduler
-from app.utils import get_core_config, RedisAction
+from app.utils import RedisAction, send_email
 
 
-@scheduler.task('interval', id='corn_get_data', seconds=10)
+@scheduler.task('interval', id='corn_check_node', seconds=10)
 def corn_check_node():
     """
     定时任务执行时间：每隔10s执行一次
 
-    定时任务 检查每个redis node 是否可用
+    定时任务 检查每个 redis node 是否可用
     几次不行之后 则 从集群中移除节点,并发送邮件给管理员
     """
     logger.info('corn_check_node job start executed!!!!')
     hash_ring_map = RedisAction.get_hash_ring_map()
     real_node_list = list(set(hash_ring_map.values()))
     error_list = []
+
+    if not real_node_list:
+        logger.info('没有节点无需检查')
+        return
 
     logger.info(f'开始检查:{real_node_list}')
     for node in real_node_list:
@@ -37,21 +40,3 @@ def corn_check_node():
     if error_list:
         send_email(error_list)
     logger.info('corn_check_node job end executed!')
-
-
-def send_email(error_list):
-    """
-    发送邮件
-    :param error_list:错误的信息
-    :return:
-    """
-    logger.info(f'开始发送邮件:{error_list}')
-    config = get_core_config()
-    smtp_account = config.get("SMTP_ACCOUNT")
-    smtp_password = config.get("SMTP_PASSWORD")
-    smtp_host = config.get("SMTP_HOST")
-    smtp_port = config.get("SMTP_PORT")
-    send_user = config.get("SEND_EMAIL")
-    contents = ["尊敬的管理员:", str(error_list)]
-    yag = yagmail.SMTP(smtp_account, smtp_password, host=smtp_host, port=smtp_port)
-    yag.send(send_user, "您在接收邮件", contents)

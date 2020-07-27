@@ -11,6 +11,8 @@ Usage:
 from .consistency_hash import *
 # 常量
 from .constant import *
+# 邮件相关
+from .email import *
 # JSON编码处理
 from .encoder import JsonEncoder
 # 异常模块

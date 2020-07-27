@@ -7,7 +7,6 @@ create time '2020/7/6 09:09'
 Usage:
 
 """
-import calendar
 import datetime
 import time
 
@@ -144,175 +143,23 @@ def verify_date_format(this_time, formatter="%Y-%m-%d"):
         return False
 
 
-def get_month_range(this_time=None, is_last_month=False, is_include_time=True):
+def time_out(fn, *args, **kwargs):  # pylint:disable=unused-argument
     """
-    根据年月日获取月份的起止日期，必须先执行 verify_date_format（）函数，否则没法保证 不报错
-    默认返回当前日期时间所在月份范围
-
-    Usage:
-        >>> get_month_range()
-        >>>
-
-    :param this_time: str 字符串 如果不传值，表示获取当月日期范围
-    :param is_last_month: 是否根据输入月份获取上个月月份范围
-    :param is_include_time: 返回值是否包括 时分秒的范围
-    :return: str
-    """
-
-    if this_time:
-        time_format = time.strptime(this_time, "%Y-%m-%d")
-    else:
-        time_format = time.localtime()
-
-    year = time_format.tm_year
-    month = time_format.tm_mon
-
-    if is_last_month:
-        if month == 1:
-            month = 12
-            year -= 1
-        else:
-            month = month - 1
-
-    day_begin = "%d-%02d-01" % (year, month)
-
-    wday, month_range = calendar.monthrange(year, month)  # pylint:disable=unused-variable
-    day_end = "%d-%02d-%02d" % (year, month, month_range)
-
-    if is_include_time:
-        day_begin = "{} 00:00:00".format(day_begin)
-        day_end = "{} 23:59:59".format(day_end)
-
-    return day_begin, day_end
-
-
-def get_pre_month(str_date):
-    """
-    获取上个月一号
-
-    Usage:
-        >>> get_pre_month('2018-11-23')
-        >>> '2018-10-01'
-
-        >>> get_pre_month('2019-01-23')
-        >>> '2018-12-01'
-
-    :param str_date:
+    超时的装饰器
+    :param fn:
+    :param args:
+    :param kwargs:
     :return:
     """
 
-    try:
-        time_format = time.strptime(str_date, "%Y-%m-%d")
-        year = time_format.tm_year
-        month = time_format.tm_mon
-        if month == 1:
-            month = 12
-            year -= 1
-        else:
-            month = month - 1
-        return "%d-%02d-01" % (year, month)
-    except Exception as e:
-        print(e)
-        return False
+    def wrapper(*args, **kwargs):
+        try:
+            result = fn(*args, **kwargs)
+            return result
+        except FunctionTimedOut:
+            return False, '请检查配置'
 
-
-def get_this_month_first_day():
-    """
-    获取本月一号
-    :return: '2019-09-01'
-    """
-
-    str_date = datetime_2_str(current_time("%Y-%m-%d"), "%Y-%m-%d")
-    return str_date[: 0 - 2] + "01"
-
-
-def get_next_month(str_date):
-    """
-    获取下个月一号
-
-    Usage:
-        >>> get_next_month('2018-11-23')
-        >>> '2018-12-01'
-
-        >>> get_next_month('2018-12-23')
-        >>> '2019-01-01'
-
-    :param str_date:
-    :return:
-    """
-
-    try:
-        time_format = time.strptime(str_date, "%Y-%m-%d")
-        year = time_format.tm_year
-        month = time_format.tm_mon
-        if month == 12:
-            month = 1
-            year += 1
-        else:
-            month = month + 1
-        return "%d-%02d-01" % (year, month)
-    except Exception:
-        return False
-
-
-def judge_same_month(input_month_list):
-    """
-    判断 数据 是否 在同一个月
-    :param input_month_list:list
-    :return: str or bool
-    """
-    month_list = []
-    for item in input_month_list:
-        month_list.append(item["trade_date"].strftime("%Y-%m"))
-    month_set = set(month_list)
-    if len(month_set) != 1:
-        return False
-    month_str = month_set.pop()
-    # '2018-11-01'
-    return month_str + "-01"
-
-
-def verify_date_grater_than_now(judge_date):
-    """
-    验证 输入的时间大于当前时间
-    :param judge_date:
-    :return:
-    """
-    if isinstance(judge_date, str):
-        judge_date = str_2_datetime(judge_date, "%Y-%m-%d")
-    if judge_date > str_2_datetime(current_time("%Y-%m-%d"), "%Y-%m-%d"):
-        return False
-    return True
-
-
-def this_month_first_day():
-    """
-    获取本月1号日期，返回date格式数据
-    :return:
-    """
-    year = time.localtime().tm_year
-    month = time.localtime().tm_mon
-    return str_2_datetime(f"{year}-{month}-01", "%Y-%m-%d").date()
-
-
-def judge_month(input_data: str):
-    """
-    判断 输入的时间是否为 大于当前时间;如果输入时间大于当前时间 返回True
-
-    :param input_data:
-    :return:
-
-    Usage:
-    >>> judge_month('2019-09-01')
-    >>> False # current_time_str='2019-08-16'
-    >>> judge_month('2019-08-01')
-    >>> True # current_time_str='2019-08-16'
-    """
-    current_time_str = current_time("%Y-%m-%d")
-    if input_data > current_time_str:
-        return True
-    return False
-
+    return wrapper
 
 # def func_line_time(f):
 #     """
@@ -339,22 +186,3 @@ def judge_month(input_data: str):
 #         return func_return
 #
 #     return decorator
-
-
-def time_out(fn, *args, **kwargs):  # pylint:disable=unused-argument
-    """
-    超时的装饰器
-    :param fn:
-    :param args:
-    :param kwargs:
-    :return:
-    """
-
-    def wrapper(*args, **kwargs):
-        try:
-            result = fn(*args, **kwargs)
-            return result
-        except FunctionTimedOut:
-            return False, '请检查配置'
-
-    return wrapper

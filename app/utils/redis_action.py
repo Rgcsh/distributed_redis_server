@@ -20,6 +20,7 @@ from .transform import byte2str
 
 class RedisAction:
     """redis操作类"""
+
     @staticmethod
     def url_format(*args, **kwargs):
         """
@@ -108,8 +109,42 @@ class RedisAction:
         :return:
         """
         try:
-            ping_result = redis_obj.ping()
-            return ping_result, ''
+            # 能否ping通
+            redis_obj.ping()
+            # 分配的内存是否够用
+            redis_obj.setex('test:distributed_redis_server', 0.1, 1)
+            return True, ''
+        except Exception as _:
+            logger.error(traceback.format_exc())
+            return False, _
+
+    @staticmethod
+    @time_out
+    @func_set_timeout(5)
+    def check_redis_memory(redis_obj, memory_num):
+        """
+        检查 redis的状态是否可用
+        添加 超时5s超时自动认为连接失败
+        :param redis_obj:
+        :param memory_num: 设置的内存警告大小,单位是M 如 20M,则传 20
+        :return:
+        """
+        try:
+            memory_dict = redis_obj.info('Memory')
+            # 已经使用内存容量
+            used_memory = memory_dict.get('used_memory')
+            # 设置最大内存容量
+            maxmemory = memory_dict.get('maxmemory')
+            if maxmemory == 0:
+                # todo: 后续可以改为 获取机器的物理内存大小 进行 校验
+                logger.info('节点没有设置最大内存限制,跳过校验')
+                return True, ''
+            # 可以使用最大内存容量
+            can_use = maxmemory - used_memory
+            if can_use < 1024 * 1024 * memory_num:  # M转为 bytes
+                return False, f'maxmemory:{memory_dict.get("used_memory_human")},' \
+                              f'used_memory:{memory_dict.get("maxmemory_human")},最大可用内容容量:{can_use} bytes'
+            return True, ''
         except Exception as _:
             logger.error(traceback.format_exc())
             return False, _

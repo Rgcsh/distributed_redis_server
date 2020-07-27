@@ -12,6 +12,7 @@ from app.controllers.base import BaseController
 from app.controllers.tasks.corn_check_node import corn_check_node
 from app.utils import json_success
 from .base import api
+from ..tasks.corn_check_memory import corn_check_memory
 
 
 @api.resource("/check")
@@ -23,4 +24,5 @@ class NodeCController(BaseController):
         POST: /node/check
         """
         corn_check_node()
+        corn_check_memory()
         return json_success()
