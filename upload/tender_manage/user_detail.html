@@ -1,0 +1,60 @@
+<div id="content_center">
+	<ul>
+		<li style="line-height: 28px;font-size: 16px;color: #535A6C;">
+			<span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 13px;
+margin-right: 1px;"></span>修改个人资料
+		</li>
+		<li>
+			<hr style="border-top: 1px solid #A3ADC6;" />
+		</li>
+		<li>
+			<label class="word_spacing">邮箱</label>
+			<input type="text" id="user_email" disabled="disabled" />
+		</li>
+		<li class="li_password">
+			<label class="word_except">新的密码</label>
+			<input type="password" id="new_password" />
+		</li>
+		<li>
+			<button type="button" class="btn btn-default btn-primary" id='user_deatil_submit' style="margin-left: 16%;">提交</button>
+			<label style="color: orangered;"></label>
+		</li>
+	</ul>
+</div>
+<script type="text/javascript">
+
+	$('#user_email').val($.cookie('email'));
+
+	$("#user_deatil_submit").click(function() {
+	    hide_popover('#user_deatil_submit', '')
+		var is_open = $('#user_deatil_submit').attr('is_open');
+		var json_data = {
+			'token': $.cookie('token'),
+		}
+		//修改密码
+		var new_password = $('#new_password').val();
+		if(new_password == '') {
+			hide_popover('#user_deatil_submit', '请输入密码')
+		} else {
+			json_data['password'] = new_password
+		}
+		console.log(json_data)
+		$.ajax({
+			url: serverUrl_user + "reset/password",
+			type: 'post',
+			dataType: "json",
+			data: json_data,
+			success: function(data) {
+				if(data.respCode == 200) {
+					hide_popover('#user_deatil_submit', '修改成功')
+				} else {
+					hide_popover('#user_deatil_submit', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#user_deatil_submit', '程序错误,请联系管理员')
+			}
+		});
+	});
+</script>

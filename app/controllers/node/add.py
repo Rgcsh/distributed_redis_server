@@ -12,11 +12,11 @@ from flask import current_app
 from app.controllers.base import BaseController
 from app.core import logger, redis
 from app.libs.pre_request import Rule, pre
-from app.utils import json_success, json_fail, HASH_RING_MAP, ConsistencyHash, RedisAction
+from app.utils import json_success, HASH_RING_MAP, ConsistencyHash, RedisAction, ApiException
 from .base import api
 
 request_upsert_rules = {
-    "host": Rule(direct_type=str, allow_empty=False),
+    "host": Rule(direct_type=str, allow_empty=False),  # 尽量用内网地址
     "port": Rule(direct_type=int, allow_empty=False),
     "db": Rule(direct_type=int, allow_empty=False, gte=0, lte=15),
     "password": Rule(direct_type=str, allow_empty=True),
@@ -33,6 +33,16 @@ class NodeAddController(BaseController):
 
         POST: /node/add
         """
+        self.add(params)
+        return json_success()
+
+    @classmethod
+    def add(cls, params):
+        """
+
+        :param params:
+        :return:
+        """
         host = params['host']
         port = params['port']
         replicas = current_app.config.get('VNODE_REPLICAS') or 5
@@ -42,13 +52,13 @@ class NodeAddController(BaseController):
         hash_ring_map = RedisAction.get_hash_ring_map()
         real_node_list = list(set(hash_ring_map.values()))
         if real_node_list and f'{host}:{port}' in str(real_node_list):
-            return json_fail(message='节点已存在')
+            raise ApiException(500, '节点已存在')
 
         logger.info('检查节点能否使用')
         node_redis = RedisAction.get_redis_obj(**params)
         check_result, _str = RedisAction.check_redis_status(node_redis)
         if not check_result:
-            return json_fail(message=f'节点无法连接:{_str}')
+            raise ApiException(500, f'节点无法连接:{_str}')
 
         logger.info('添加节点到hash')
         real_node_list.append(new_node)
@@ -60,4 +70,3 @@ class NodeAddController(BaseController):
         logger.info('覆盖添加 hash_ring_map')
         redis.delete(HASH_RING_MAP)
         redis.hmset(HASH_RING_MAP, hash_ring_map)
-        return json_success()

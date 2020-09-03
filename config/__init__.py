@@ -39,6 +39,13 @@ class Config:
         app.config['LOGGING_INFO_FILE'] = '/tmp/info.log'
         app.config['LOGGING_ERROR_FILE'] = '/tmp/error.log'
 
+        # 随机秘钥
+        app.config[
+            'SECRET_KEY'] = 'ieoqpfjewiofu04-302=;9eofjpes039ew[d[e0dks0erg93,u94pqm2i0[v-rt5-9302,dw-x-01%h&b=jfx$x01'
+
+        # 前端文件路径
+        app.config['FRONT_URL'] = 'upload/tender_manage/'
+
     @classmethod
     def init_extensions(cls, flask_app):
         """ 配置Flask扩展

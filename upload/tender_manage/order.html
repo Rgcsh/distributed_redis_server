@@ -1,0 +1,671 @@
+<style type="text/css">
+	.check_table_user_search_div {
+		background-color: #fff;
+		margin-left: 1%;
+		margin-right: 1%;
+		margin-top: 1%;
+		margin-bottom: 1%;
+		border: 1px solid #a8a3a3;
+	}
+
+	.check_table_user_search_div div div {
+		margin-top: 20px;
+		margin-bottom: 20px;
+	}
+
+	.check_table_user_result_div {
+		background-color: #fff;
+		margin-left: 1%;
+		margin-right: 1%;
+		margin-top: 1%;
+		border: 1px solid #a8a3a3;
+	}
+
+	/*个人中心页面*/
+	#fund_info_center {
+		width: 98%;
+		background-color: white;
+		height: auto;
+		margin-left: 1%;
+		margin-top: 2%;
+		box-shadow: 1px 1px 5px #535A6C;
+		margin-bottom: 23%;
+	}
+
+	#fund_info_center ul:first-child span {
+		font-size: 30px;
+		margin-right: 15px;
+		background-color: #535A6C;
+		padding: 7px;
+		border-radius: 23px;
+		color: white;
+	}
+
+	.fund_info_input {
+		float: right;
+		width: 75%;
+		padding-left: 0px;
+		height: 31px;
+		border: 1px solid #c2c2c2;
+		margin-right: 15px;
+	}
+
+	.fund_info_center ul li label {
+		color: #535A6C;
+		font-size: 15px;
+	}
+
+	.word_spacing {
+		letter-spacing: 28px;
+	}
+
+	.word_except {
+		margin-right: 28px;
+	}
+
+	#fund_info_buy_id {
+		/* float: right; */
+		width: 76%;
+	}
+
+	#fund_info_buy_id input {
+		margin-right: 5px;
+	}
+
+	#fund_info_sell_id input {
+		margin-right: 5px;
+	}
+
+	#page_ul li {
+		display: inline;
+		list-style: none;
+		padding-left: 0px;
+	}
+</style>
+<!-- 引入 echarts.js -->
+<script src="others/echarts/echarts-all-3.js"></script>
+
+<!-- 搜索部分 -->
+<div class="container-fluid check_table_user_search_div">
+	<div class="row clearfix">
+		<div class="col-md-2 column">
+			<span class="four_word_saping">基金ID:</span>
+			<input id="order_fund_id" type="text">
+			<label style="color: orangered"></label>
+		</div>
+		<div class="col-md-2 column">
+			<button type="button" style="float: left;margin-left: 5px;" id="order_search" class="btn btn-info">搜索</button>
+			<label style="color: orangered"></label>
+		</div>
+	</div>
+</div>
+
+<!-- 渲染订单数据部分 -->
+<div class="container-fluid check_table_user_result_div" style="padding-right: 0px;padding-left: 0px;">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<table class="table table-hover table-condensed table-bordered" style="margin-top: 10px;">
+				<thead style="background-color:#eeeeee;">
+					<tr>
+						<th style="text-align:center;">
+							订单类型
+						</th>
+						<th style="text-align:center;">
+							买入金额
+						</th>
+						<th style="text-align:center;">
+							确认金额
+						</th>
+						<th style="text-align:center;">
+							可以卖出的份额
+						</th>
+						<th style="text-align:center;">
+							确认份额
+						</th>
+						<th style="text-align:center;">
+							确认净值
+						</th>
+						<th style="text-align:center;">
+							手续费
+						</th>
+						<th style="text-align:center;">
+							交易日
+						</th>
+						<th style="text-align:center;">
+							卖出份额
+						</th>
+						<th style="text-align:center;">
+							到账金额
+						</th>
+						<th style="text-align:center;">
+							盈利金额
+						</th>
+						<th style="text-align:center;">
+							操作
+						</th>
+					</tr>
+				</thead>
+				<tbody style="background-color: #fafafa;" id="order_search_result_show">
+
+				</tbody>
+			</table>
+			<ul id="page_ul" style="padding: 7px;display: none;">
+				<li>
+					<button type="button" id="prev_id" class="btn btn-info">上一页</button>
+				</li>
+				<li>
+					<button type="button" id="next_id" class="btn btn-info">下一页</button>
+				</li>
+				<li>
+					第<input type="text" id="page_id" size="4" />页
+				</li>
+				<li>
+					<button type="button" id="jump_button" class="btn btn-info">跳转</button>
+				</li>
+				<li>
+					共<label id="all_page"> </label>页
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+
+<div id="fund_info_center">
+	<ul id="order_buy">
+		<li style="line-height: 28px;font-size: 16px;color: #535A6C;">
+			<span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 13px;margin-right: 1px;"></span>基金购买
+		</li>
+		<li>
+			<hr style="border-top: 1px solid #A3ADC6;" />
+		</li>
+		<li>
+			<label class="word_except">基金ID</label>
+			<input class="fund_info_input" type="text" id="order_buy_fund_id" />
+		</li>
+		<li>
+			<label class="word_except">买入金额</label>
+			<input class="fund_info_input" type="text" placeholder="必填,>0" id="order_buy_amount" />
+		</li>
+		<li>
+			<label class="word_except">交易日</label>
+			<input class="fund_info_input" id="order_trade_date" placeholder="默认:今日" onclick="WdatePicker({skin:'whyGreen',maxDate:'%y-%M-%d'})"
+			 type="text">
+		</li>
+		<li>
+			<label class="word_except">买入净值</label>
+			<input class="fund_info_input" type="text" placeholder="非必填,>0" id="order_net_val" />
+		</li>
+		<li>
+			<button type="button" class="btn btn-default btn-primary" id="order_buy_submit" style="margin-left: 16%;">买入</button>
+			<label style="color: orangered;"></label>
+		</li>
+	</ul>
+
+	<ul id="order_sell">
+		<li style="line-height: 28px;font-size: 16px;color: #535A6C;">
+			<span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 13px;margin-right: 1px;"></span>基金卖出
+		</li>
+		<li>
+			<hr style="border-top: 1px solid #A3ADC6;" />
+		</li>
+		<li>
+			<label class="word_except">基金ID</label>
+			<input class="fund_info_input" type="text" id="order_sell_fund_id" />
+		</li>
+		<li>
+			<label class="word_except">卖出份额</label>
+			<input class="fund_info_input" type="text" placeholder="必填,>0" id="order_sell_share" />
+			<label style="color: orangered;" id="max_can_sell_share"></label>
+		</li>
+		<li>
+			<label class="word_except">交易日</label>
+			<input class="fund_info_input" id="order_sell_trade_date" placeholder="默认:今日" onclick="WdatePicker({skin:'whyGreen',maxDate:'%y-%M-%d'})"
+			 type="text">
+		</li>
+		<li>
+			<label class="word_except">卖出净值</label>
+			<input class="fund_info_input" type="text" placeholder="非必填,>0" id="order_sell_net_val" />
+		</li>
+		<li>
+			<button type="button" class="btn btn-default btn-primary" id="order_sell_submit" style="margin-left: 16%;">卖出</button>
+			<label style="color: orangered;"></label>
+		</li>
+	</ul>
+
+	<ul id="pre_income">
+		<li style="line-height: 28px;font-size: 16px;color: #535A6C;">
+			<span class="glyphicon glyphicon-user" aria-hidden="true" style="font-size: 13px;margin-right: 1px;"></span>预测收益
+		</li>
+		<li>
+			<hr style="border-top: 1px solid #A3ADC6;" />
+		</li>
+		<li>
+			<label class="word_except">基金ID</label>
+			<input class="fund_info_input" type="text" placeholder="必填" id="pre_income_fund_id" />
+		</li>
+		<li>
+			<label class="word_except">预测净值</label>
+			<input class="fund_info_input" type="text" placeholder="必填,>0" id="pre_income_net_val" />
+		</li>
+		<li>
+			<button type="button" class="btn btn-default btn-primary" id="pre_income_submit" style="margin-left: 16%;">开始预测</button>
+			<label style="color: orangered;"></label>
+		</li>
+		<li>
+			<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+			<div id="main" style="width: 700px;height: 500px;"></div>
+		</li>
+	</ul>
+
+</div>
+
+
+<script src="others/My97DatePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	//获取 最大可卖出份额
+	$('#order_sell_fund_id').on('blur', function() {
+		var order_fund_id = $('#order_sell_fund_id').val();
+		if (order_fund_id == '') {
+			return
+		}
+
+		$.ajax({
+			url: serverUrl_order + "max/sell_share",
+			type: 'get',
+			dataType: "json",
+			data: {
+				"fund_id": order_fund_id,
+				'token': $.cookie('token'),
+			},
+			success: function(data) {
+				if (data.respCode == 200) {
+					$("#max_can_sell_share").text("最多可卖:" + data.result + "份");
+				} else {
+					$("#max_can_sell_share").text(data.respMsg);
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				$("#max_can_sell_share").text('程序错误,请联系管理员');
+			}
+		});
+
+	})
+
+	$("#pre_income_submit").click(function() {
+		hide_popover('#pre_income_submit', '')
+		var pre_income_fund_id = $('#pre_income_fund_id').val();
+		var pre_income_net_val = $('#pre_income_net_val').val();
+
+		if (pre_income_fund_id == '') {
+			hide_popover('#pre_income_submit', '基金ID不存在')
+			return false
+		}
+		if (pre_income_net_val == '' || pre_income_net_val <= 0) {
+			hide_popover('#pre_income_submit', '买入金额不存在或范围错误')
+			return false
+		}
+
+		var json_data = {
+			'token': $.cookie('token'),
+			"fund_id": pre_income_fund_id,
+			"pre_net_val": parseFloat(pre_income_net_val),
+		}
+
+		$.ajax({
+			url: serverUrl_order + "sell/position/income/curve",
+			type: 'post',
+			dataType: "json",
+			data: json_data,
+			success: function(data) {
+				if (data.respCode == 200) {
+					hide_popover('#pre_income_submit', '预测成功')
+					var profit_amount_list = data.result['profit_amount_list']
+					var sell_share_list = data.result['sell_share_list']
+					var trade_date_list = data.result['trade_date_list']
+
+					// 基于准备好的dom，初始化echarts实例
+					var myChart = echarts.init(document.getElementById('main'));
+					option = {
+						title: {
+							text: '基金预测盈利情况',
+							subtext: '666'
+						},
+						tooltip: {
+							trigger: 'axis'
+						},
+						legend: {
+							data: ['盈利金额', '可卖份额']
+						},
+						toolbox: {
+							show: true,
+							feature: {
+								magicType: {
+									show: true,
+									type: ['stack', 'tiled']
+								},
+								saveAsImage: {
+									show: true
+								}
+							}
+						},
+						xAxis: {
+							type: 'category',
+							boundaryGap: false,
+							data: trade_date_list
+						},
+						yAxis: {
+							type: 'value'
+						},
+						series: [{
+								name: '盈利金额',
+								type: 'line',
+								smooth: true,
+								data: profit_amount_list
+							},
+							{
+								name: '可卖份额',
+								type: 'line',
+								smooth: true,
+								data: sell_share_list
+							}
+						]
+					};
+					// 使用刚指定的配置项和数据显示图表。
+					myChart.setOption(option);
+
+				} else {
+					hide_popover('#pre_income_submit', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#pre_income_submit', '程序错误,请联系管理员')
+			}
+		});
+	});
+
+	//订单卖出
+	$("#order_sell_submit").click(function() {
+		hide_popover('#order_sell_submit', '')
+		var order_sell_fund_id = $('#order_sell_fund_id').val();
+		var order_sell_share = $('#order_sell_share').val();
+		var order_trade_date = $('#order_sell_trade_date').val();
+		var order_sell_net_val = $('#order_sell_net_val').val();
+
+		if (order_sell_fund_id == '') {
+			hide_popover('#order_sell_submit', '基金ID不存在')
+			return false
+		}
+		if (order_sell_share == '' || order_sell_share <= 0) {
+			hide_popover('#order_sell_submit', '买入金额不存在或范围错误')
+			return false
+		}
+		if (order_trade_date == '') {
+			hide_popover('#order_sell_submit', '交易日历不存在')
+			return false
+		}
+
+		var json_data = {
+			'token': $.cookie('token'),
+			"fund_id": order_sell_fund_id,
+			"sell_share": parseFloat(order_sell_share),
+			"trade_date": order_trade_date,
+		}
+		if (order_sell_net_val != '' && order_sell_net_val > 0) {
+			json_data['net_val'] = order_sell_net_val
+		}
+		console.log('dfdf')
+		$.ajax({
+			url: serverUrl_order + "sell",
+			type: 'post',
+			dataType: "json",
+			data: json_data,
+			success: function(data) {
+				if (data.respCode == 200) {
+					hide_popover('#order_sell_submit', '卖出成功')
+				} else {
+					hide_popover('#order_sell_submit', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#order_sell_submit', '程序错误,请联系管理员')
+			}
+		});
+	});
+
+	//订单买入
+	$("#order_buy_submit").click(function() {
+		hide_popover('#order_buy_submit', '')
+		var order_buy_fund_id = $('#order_buy_fund_id').val();
+		var order_buy_amount = $('#order_buy_amount').val();
+		var order_net_val = $('#order_net_val').val();
+		var order_trade_date = $('#order_trade_date').val();
+
+		if (order_buy_fund_id == '') {
+			hide_popover('#order_buy_submit', '基金ID不存在')
+			return false
+		}
+		if (order_buy_amount == '' || order_buy_amount <= 0) {
+			hide_popover('#order_buy_submit', '买入金额不存在或范围错误')
+			return false
+		}
+		
+
+		var json_data = {
+			'token': $.cookie('token'),
+			"fund_id": order_buy_fund_id,
+			"buy_amount": parseFloat(order_buy_amount),
+		}
+		
+		if (order_trade_date != '') {
+			json_data['trade_date'] = order_trade_date
+		}
+		
+		if (order_net_val != '') {
+			json_data['net_val'] = order_net_val
+		}
+
+		$.ajax({
+			url: serverUrl_order + "buy",
+			type: 'post',
+			dataType: "json",
+			data: json_data,
+			success: function(data) {
+				if (data.respCode == 200) {
+					hide_popover('#order_buy_submit', '买入成功')
+				} else {
+					hide_popover('#order_buy_submit', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#order_buy_submit', '程序错误,请联系管理员')
+			}
+		});
+	});
+
+	function val_filter(result_data, field) {
+		// 对结果进行null值过滤
+		val = result_data[field]
+		if (val == null) {
+			val = ''
+		}
+		return val
+	}
+
+	//搜索按钮
+	$('#order_search').on('click', function() {
+		$("#page_ul").hide();
+		var order_fund_id = $('#order_fund_id').val();
+		if (order_fund_id == '') {
+			hide_popover('#order_search', '基金ID不存在')
+		}
+		get_order_query_api(order_fund_id, 1)
+	})
+
+	//上一页
+	$('#prev_id').on('click', function() {
+		var page_index = $('#page_id').val() - 1;
+		if (page_index == 0) {
+			return false
+		}
+		$("#page_ul").hide();
+		var order_fund_id = $('#order_fund_id').val();
+		if (order_fund_id == '') {
+			hide_popover('#order_search', '基金ID不存在')
+		}
+		get_order_query_api(order_fund_id, page_index)
+	})
+
+	//下一页
+	$('#next_id').on('click', function() {
+		var page_index = parseInt($('#page_id').val()) + 1;
+		console.log(page_index)
+		if (page_index > parseInt($('#all_page').text())) {
+			return false
+		}
+		$("#page_ul").hide();
+		var order_fund_id = $('#order_fund_id').val();
+		if (order_fund_id == '') {
+			hide_popover('#order_search', '基金ID不存在')
+		}
+		get_order_query_api(order_fund_id, page_index)
+	})
+
+	//跳转页面
+	$('#jump_button').on('click', function() {
+		var page_index = $('#page_id').val();
+		console.log(page_index)
+		if (parseInt(page_index) > parseInt($('#all_page').text())) {
+			return false
+		}
+		$("#page_ul").hide();
+		var order_fund_id = $('#order_fund_id').val();
+		if (order_fund_id == '') {
+			hide_popover('#order_search', '基金ID不存在')
+		}
+		get_order_query_api(order_fund_id, page_index)
+	})
+
+	function get_order_query_api(order_fund_id, page_index) {
+		// 获取订单list接口,并渲染数据
+		$.ajax({
+			url: serverUrl_order + "query",
+			type: 'get',
+			dataType: "json",
+			data: {
+				fund_id: order_fund_id,
+				page_index: page_index,
+				token: $.cookie('token')
+			},
+			success: function(data) {
+				if (data.respCode == 200) {
+					var result_data = data.result['info_list']
+					// 分页处理
+					var all_page = data.result['count']
+					var page_index = data.result['page_index']
+					$('#all_page').text(all_page);
+					$('#page_id').val(page_index);
+					if (result_data.length > 0) {
+						$("#page_ul").show();
+					}
+
+					$('#order_search_result_show').empty();
+					for (var i = 0; i < result_data.length; i++) {
+						var order_id = val_filter(result_data[i], 'id');
+						var order_type = val_filter(result_data[i], 'order_type');
+						var buy_amount = val_filter(result_data[i], 'buy_amount');
+						var confirm_amount = val_filter(result_data[i], 'confirm_amount');
+						var can_sell_share = val_filter(result_data[i], 'can_sell_share');
+						var confirm_share = val_filter(result_data[i], 'confirm_share');
+						var confirm_net_val = val_filter(result_data[i], 'confirm_net_val');
+						var handling_fee = val_filter(result_data[i], 'handling_fee');
+						var trade_date = val_filter(result_data[i], 'trade_date');
+						var sell_share = val_filter(result_data[i], 'sell_share');
+						var account_amount = val_filter(result_data[i], 'account_amount');
+						var profit_amount = val_filter(result_data[i], 'profit_amount');
+
+						// 对结果进行处理
+						if (order_type == 2) {
+							// 可以卖出份额 卖出时 不存在
+							can_sell_share = ''
+						} else {
+							// 盈利金额 买入时 不存在
+							profit_amount = ''
+						}
+
+						if (order_type == 1) {
+							order_type = '买入'
+						} else {
+							order_type = '卖出'
+						}
+
+						var str = '<tr><td align="center">' +
+							order_type +
+							'</td><td align="center">' +
+							buy_amount +
+							'</td><td align="center">' +
+							confirm_amount +
+							'</td><td align="center">' +
+							can_sell_share +
+							'</td><td align="center">' +
+							confirm_share +
+							'</td><td align="center">' +
+							confirm_net_val +
+							'</td><td align="center">' +
+							handling_fee +
+							'</td><td align="center">' +
+							trade_date +
+							'</td><td align="center">' +
+							sell_share +
+							'</td><td align="center">' +
+							account_amount +
+							'</td><td align="center">' +
+							profit_amount +
+							'</td><td align="center">' +
+							'<button type="button" delete_id=' + order_id +
+							'class="btn btn-default btn-primary delete_button" style="margin-left: 16%;" onclick="click_delete(' +
+							order_id + ')">删除</button>' +
+							'</td></tr>'
+						$('#order_search_result_show').append(str);
+					}
+				} else {
+					hide_popover('#order_search', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#order_search', '程序错误')
+			}
+		});
+	}
+
+	// 删除订单
+	function click_delete(order_id) {
+		var confirm = window.confirm('此功能会删除 包括此订单以后的所有订单,你确定删除吗?')
+		if (confirm == true) {
+			var order_fund_id = $('#order_fund_id').val();
+			$.ajax({
+				url: serverUrl_order + "delete",
+				type: 'post',
+				dataType: "json",
+				data: {
+					"fund_id": order_fund_id,
+					"order_id": order_id,
+					'token': $.cookie('token'),
+				},
+				success: function(data) {
+					if (data.respCode == 200) {
+						hide_popover('#order_search', '删除成功')
+					} else {
+						hide_popover('#order_search', data.respMsg)
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					hide_popover('#order_search', '程序错误,请联系管理员')
+				}
+			});
+		}
+	}
+</script>

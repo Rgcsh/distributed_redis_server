@@ -478,3 +478,11 @@ def byte2str(_bytes):
     :return:
     """
     return str(_bytes, encoding="utf-8")
+
+
+def get_unique_str():
+    """
+    生成唯一ID
+    :return:
+    """
+    return str(uuid.uuid1()).replace('-', '')

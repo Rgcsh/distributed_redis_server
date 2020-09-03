@@ -7,8 +7,8 @@ create time '2019/6/27 10:18'
 import json
 
 from flask import request
-from app.core import logger
 
+from app.core import logger
 from .base import BaseMiddleWare
 
 
@@ -42,6 +42,9 @@ class LogMiddleWare(BaseMiddleWare):
     def after_request(response):
 
         # 获取响应数据
+        if 'application/json' not in response.content_type:
+            return response
+
         try:
             response_data = json.loads(response.data)
         except Exception:

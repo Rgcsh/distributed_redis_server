@@ -15,6 +15,7 @@ from flask_cors import CORS
 
 import app.core as core
 from app import controllers
+from app.controllers.base_route import register_base_route
 from app.middleware import MIDDLEWARE
 from app.middleware.base import BaseMiddleWare
 from app.utils import json_fail, JsonEncoder
@@ -44,6 +45,9 @@ def configure_blueprints(flask_app):
         module = importlib.import_module(f'app.controllers.{module_name}.base')
         flask_app.register_blueprint(
             getattr(module, module_name), url_prefix=('/' + module_name))
+
+    # 注册 / 下的view
+    register_base_route(flask_app)
 
 
 def configure_middleware(flask_app):

@@ -11,4 +11,6 @@ Usage:
 __all__ = [
     "node",
     "tasks",
+    "user",
+    "server_info",
 ]

@@ -6,7 +6,16 @@ create time '2019/9/18'
 """
 import urllib.parse
 
-from flask import request
+from flask import request, g
+
+
+def get_user_id():
+    """
+    获取请求上下文 g 中 的user_id
+    :return:
+    """
+    return g.account.get('id')
+    # return 2
 
 
 def cache_key():

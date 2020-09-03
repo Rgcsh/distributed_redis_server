@@ -36,3 +36,13 @@ def get_random_int() -> int:
     :return:
     """
     return random.randint(0, 2 ** 32 - 1)
+
+
+def md5_encrypt(passwd):
+    """md5两次加密"""
+    m = hashlib.md5()
+    m.update(passwd.encode("utf8"))
+    sign = m.hexdigest()
+    m1 = hashlib.md5()
+    m1.update(sign.encode("utf8"))
+    return m.hexdigest()

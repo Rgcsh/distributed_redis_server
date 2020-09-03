@@ -118,15 +118,13 @@ class RedisAction:
             logger.error(traceback.format_exc())
             return False, _
 
-    @staticmethod
+    @classmethod
     @time_out
     @func_set_timeout(5)
-    def check_redis_memory(redis_obj, memory_num):
+    def get_redis_memory(cls, redis_obj):
         """
-        检查 redis的状态是否可用
-        添加 超时5s超时自动认为连接失败
+        获取redis 内存信息
         :param redis_obj:
-        :param memory_num: 设置的内存警告大小,单位是M 如 20M,则传 20
         :return:
         """
         try:
@@ -136,15 +134,30 @@ class RedisAction:
             # 设置最大内存容量
             maxmemory = memory_dict.get('maxmemory')
             if maxmemory == 0:
-                # todo: 后续可以改为 获取机器的物理内存大小 进行 校验
-                logger.info('节点没有设置最大内存限制,跳过校验')
-                return True, ''
-            # 可以使用最大内存容量
-            can_use = maxmemory - used_memory
-            if can_use < 1024 * 1024 * memory_num:  # M转为 bytes
-                return False, f'maxmemory:{memory_dict.get("used_memory_human")},' \
-                              f'used_memory:{memory_dict.get("maxmemory_human")},最大可用内容容量:{can_use} bytes'
-            return True, ''
+                memory_dict['can_use_rate'] = None
+            else:
+                # 可以使用最大内存容量
+                can_use_rate = used_memory / maxmemory
+                memory_dict['can_use_rate'] = can_use_rate
+            return True, memory_dict
         except Exception as _:
             logger.error(traceback.format_exc())
-            return False, _
+            return False, {'used_memory': '', 'maxmemory': '', 'can_use_rate': ''}
+
+    @classmethod
+    def check_redis_memory(cls, redis_obj, memory_limit_rate):
+        """
+        检查 redis的状态是否可用
+        添加 超时5s超时自动认为连接失败
+        :param redis_obj:
+        :param memory_limit_rate: 内存限制率
+        :return:
+        """
+        status, memory_dict = cls.get_redis_memory(redis_obj)
+        if not status:
+            return False, '获取redis内存信息失败'
+        can_use_rate = memory_dict.get('can_use_rate')
+        if can_use_rate is not None and can_use_rate < memory_limit_rate:  # M转为 bytes
+            return False, f'maxmemory:{memory_dict.get("used_memory_human")},' \
+                          f'used_memory:{memory_dict.get("maxmemory_human")},可用内存使用率:{can_use_rate}'
+        return True, ''
