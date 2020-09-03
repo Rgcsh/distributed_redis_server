@@ -33,3 +33,45 @@ class ServerInfoModel(ServerInfoBase):
         for item in result:
             _list.append({'id': item[0], 'note': item[1]})
         return _list
+
+    @classmethod
+    def get_info(cls, _id, field_list=None):
+        """
+        获取服务信息
+        :param _id:
+        :return:
+        """
+        query_list = cls.warn_field_list
+        if field_list:
+            query_list += field_list
+        return cls.info([cls.id == _id], query_list)
+
+    @classmethod
+    def get_connect_master_server_info(cls):
+        """
+        获取服务信息的连接数据
+        :return:
+        """
+        return cls.info_all([cls.cache_type == 1], cls.warn_field_list)
+
+    @classmethod
+    def del_server(cls, _id, cache_type):
+        """
+        状态删除服务
+        :param _id:
+        :param cache_type:
+        :return:
+        """
+        query_list = [cls.id == _id]
+        if cache_type == 1:
+            query_list += [cls.master_server_id == _id]
+        return cls.update(query_list, {'state': 3})
+
+    @classmethod
+    def get_master_server_info_by_node_id(cls, _id):
+        """
+        根据 节点ID 找到对应主服务器相关信息
+        :param _id:
+        :return:
+        """
+        cls.info_first_and_query([cls.id == _id], cls.master_server_id)

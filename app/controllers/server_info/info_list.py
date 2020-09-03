@@ -30,7 +30,7 @@ class ServerInfoListController(BaseController):
         """
         _list = ServerInfoModel.get_info_list_by_id(params.get('id'))
         for node in _list:
-            redis_obj = RedisAction.get_redis_obj(node)
+            redis_obj = RedisAction.get_redis_obj(**node)
             _, memory_dict = RedisAction.get_redis_memory(redis_obj)
             node.update(memory_dict)
             for field in ServerInfoModel.warn_field_list:

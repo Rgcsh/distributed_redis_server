@@ -54,12 +54,14 @@ class RedisAction:
             return f"redis://{host}:{port}/{db}"
 
     @staticmethod
-    def get_hash_ring_map():
+    def get_hash_ring_map(redis_obj=None):
         """
         获取manager redis中的map,并格式化
         :return:
         """
-        _dict = redis.hgetall(HASH_RING_MAP)
+        if not redis_obj:
+            redis_obj = redis
+        _dict = redis_obj.hgetall(HASH_RING_MAP)
         new_dict = {}
         for k, v in _dict.items():
             new_dict[byte2str(k)] = byte2str(v)
@@ -112,7 +114,7 @@ class RedisAction:
             # 能否ping通
             redis_obj.ping()
             # 分配的内存是否够用
-            redis_obj.setex('test:distributed_redis_server', 0.1, 1)
+            redis_obj.setex('test:distributed_redis_server', 1, 1)
             return True, ''
         except Exception as _:
             logger.error(traceback.format_exc())
