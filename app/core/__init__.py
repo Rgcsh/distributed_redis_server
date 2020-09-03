@@ -28,6 +28,7 @@ db = SQLAlchemy()
 Base = db.Model
 
 __all__ = [
+    "db",
     "logger",
     "redis",
     "scheduler",

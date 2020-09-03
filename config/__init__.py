@@ -84,6 +84,7 @@ class Config:
         self.init_core(app)
         self.init_log(app)
         self.init_redis(app)
+        self.init_db(app)
 
     def init_core(self, app):
         """ 初始化Core模块参数
@@ -93,6 +94,18 @@ class Config:
         # Auto config core info
         for key, value in core.items():
             app.config[key.upper()] = value
+
+    def init_db(self, app):
+        """
+        """
+        db = self.conf.get("db", dict())
+
+        sql_binds = {}
+        base_url = "mysql+pymysql://{username}:{password}@{host}:{port}/{db_name}?charset=utf8mb4"
+        for db_name, conf in db.items():
+            sql_binds[db_name] = base_url.format(db_name=db_name, **conf)
+        app.config['SQLALCHEMY_BINDS'] = sql_binds
+        app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
     def init_log(self, app):
         """ 初始化Log模块参数
