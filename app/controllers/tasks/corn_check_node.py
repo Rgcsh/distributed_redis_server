@@ -20,29 +20,37 @@ def corn_check_node():
 
     定时任务 检查每个 redis node 是否可用
     几次不行之后 则 从集群中移除节点,并发送邮件给管理员
+    todo:添加查询db的缓存
     """
     logger.info('corn_check_node job start executed!!!!')
     # 读取上下文
     with scheduler.app.app_context():
-        server_info_list = ServerInfoModel.get_connect_master_server_info()
-        logger.info(f'获取 主服务器信息成功:{server_info_list}')
-        for server_info in server_info_list:
-            master_redis_obj = RedisAction.get_redis_obj(**server_info)
-            hash_ring_map = RedisAction.get_hash_ring_map(master_redis_obj)
-            real_node_list = list(set(hash_ring_map.values()))
-            error_list = []
+        all_server_info_list = ServerInfoModel.get_all_info()
+        logger.info(f'获取 所有服务器信息成功')
+        error_list = []
+        for server_info in all_server_info_list:
+            if server_info.get('cache_type') == 1:
+                master_redis_obj = RedisAction.get_redis_obj(server_info)
+                hash_ring_map = RedisAction.get_hash_ring_map(master_redis_obj)
+                real_node_list = list(set(hash_ring_map.values()))
 
-            if not real_node_list:
-                logger.info('没有节点无需检查')
-                continue
+                if not real_node_list:
+                    logger.info('没有节点无需检查')
+                    continue
 
-            logger.info(f'开始检查:{real_node_list}')
-            for node in real_node_list:
-                redis_obj = RedisAction.get_redis_obj(node)
-                status, message = RedisAction.check_redis_status(redis_obj)
-                if not status:
-                    ServerInfoNodeRemoveController.remove_node(node, hash_ring_map, master_redis_obj)
-                    error_list.append(f'节点:{node} 连接失败,原因:{message}')
-            if error_list:
-                send_email(error_list)
+                logger.info(f'开始检查:{real_node_list}')
+                for node in real_node_list:
+                    redis_obj = RedisAction.get_redis_obj(node)
+                    status, message = RedisAction.check_redis_status(redis_obj)
+                    if not status:
+                        logger.info('修改db状态为 失效')
+                        if not ServerInfoModel.update_state(server_info):
+                            raise Exception(f'修改节点状态失败,node:{node}')
+                        logger.info('移除节点')
+                        ServerInfoNodeRemoveController.remove_node(node, hash_ring_map, master_redis_obj)
+                        error_list.append(f'节点:{node} 连接失败,原因:{message}')
+
+        if error_list:
+            send_email(error_list)
+
     logger.info('corn_check_node job end executed!')

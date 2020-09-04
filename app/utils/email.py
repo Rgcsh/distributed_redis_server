@@ -29,3 +29,4 @@ def send_email(error_list):
     contents = ["尊敬的管理员:", str(error_list)]
     yag = yagmail.SMTP(smtp_account, smtp_password, host=smtp_host, port=smtp_port)
     yag.send(send_user, "您在接收邮件", contents)
+    logger.info('发送邮件结束')

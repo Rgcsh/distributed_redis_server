@@ -159,6 +159,8 @@ class RedisAction:
         if not status:
             return False, '获取redis内存信息失败'
         can_use_rate = memory_dict.get('can_use_rate')
+        if can_use_rate is None:
+            return False, '没有设置内存限制:maxmemory'
         if can_use_rate is not None and can_use_rate < memory_limit_rate:  # M转为 bytes
             return False, f'maxmemory:{memory_dict.get("used_memory_human")},' \
                           f'used_memory:{memory_dict.get("maxmemory_human")},可用内存使用率:{can_use_rate}'

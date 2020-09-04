@@ -30,7 +30,7 @@ class ServerInfoBase(Base, BaseModel):
     __tablename__ = 't_server_info'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    host = Column(VARCHAR(120), unique=True, nullable=False, comment='IP地址')
+    host = Column(VARCHAR(120), nullable=False, comment='IP地址')
     port = Column(Integer, nullable=False, comment='端口')
     db = Column(Integer, nullable=False, comment='db号')
     password = Column(VARCHAR(360), nullable=True, comment='密码')

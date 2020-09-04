@@ -10,7 +10,8 @@ class ServerInfoModel(ServerInfoBase):
     __bind_key__ = ServerInfoBase.__bind_key__
     __tablename__ = ServerInfoBase.__tablename__
 
-    query_list = ['id', 'host', 'port', 'db', 'password', 'ip_address', 'memory_threshold', 'cache_type', 'note', 'state']
+    query_list = ['id', 'host', 'port', 'db', 'password', 'memory_threshold', 'cache_type', 'note', 'state',
+                  'master_server_id']
     warn_field_list = ['host', 'port', 'db', 'password']
 
     @classmethod
@@ -21,6 +22,14 @@ class ServerInfoModel(ServerInfoBase):
         :return:
         """
         return cls.info([cls.id == _id, cls.master_server_id == _id], cls.query_list)
+
+    @classmethod
+    def get_all_info(cls):
+        """
+        根据id查询数据list
+        :return:
+        """
+        return cls.info_all([cls.state == 1], cls.query_list)
 
     @classmethod
     def get_master_server_info(cls):
@@ -66,6 +75,19 @@ class ServerInfoModel(ServerInfoBase):
         if cache_type == 1:
             query_list += [cls.master_server_id == _id]
         return cls.update(query_list, {'state': 3})
+
+    @classmethod
+    def update_state(cls, info_dict):
+        """
+        更新状态
+        :param info_dict:
+        :return:
+        """
+        query_list = [cls.host == info_dict['host'],
+                      cls.port == info_dict['port'],
+                      cls.master_server_id == info_dict['master_server_id'],
+                      cls.db_name == info_dict['db']]
+        return cls.update(query_list, {'state': 2})
 
     @classmethod
     def get_master_server_info_by_node_id(cls, _id):
