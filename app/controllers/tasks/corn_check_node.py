@@ -30,6 +30,7 @@ def corn_check_node():
         error_list = []
         for server_info in all_server_info_list:
             if server_info.get('cache_type') == 1:
+                # 主服务器检查
                 master_redis_obj = RedisAction.get_redis_obj(**server_info)
                 hash_ring_map = RedisAction.get_hash_ring_map(master_redis_obj)
                 real_node_list = list(set(hash_ring_map.values()))
@@ -44,7 +45,9 @@ def corn_check_node():
                     status, message = RedisAction.check_redis_status(redis_obj)
                     if not status:
                         logger.info('修改db状态为 失效')
-                        if not ServerInfoModel.update_state(server_info):
+                        node_dict = {'master_server_id': server_info.get('id')}
+                        node_dict.update(RedisAction.split_url_format(node))
+                        if not ServerInfoModel.update_state(node_dict):
                             raise Exception(f'修改节点状态失败,node:{node}')
                         logger.info('移除节点')
                         ServerInfoNodeRemoveController.remove_node(node, hash_ring_map, master_redis_obj)

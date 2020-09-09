@@ -28,9 +28,11 @@ class ServerInfoNodeRemoveController(BaseController):
     @pre.catch(post=request_upsert_rules)
     def post(self, params):
         """ 删除 所有类型服务器 接口
-        直接对 redis数据进行删除,然后同步到redis
+        直接对 redis数据进行删除,然后同步到 mysql
 
-        删除 mysql中数据
+        如果是 业务节点服务器 则 只删除 业务节点相关数据
+        如果是  主服务器 则 删除此主服务器及相关业务节点数据
+
         POST: /server_info/remove
         """
         _id = params['id']

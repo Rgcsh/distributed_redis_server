@@ -54,6 +54,25 @@ class RedisAction:
             return f"redis://{host}:{port}/{db}"
 
     @staticmethod
+    def split_url_format(url: str):
+        """
+        把 redis url分析出 host,port,db, password
+        :param url:
+        :return:
+        """
+        _url = url.split('redis://')[1]
+        if '@' in _url:
+            _password, _url = _url.split('@')
+            password = _password.split(':')[1]
+            host, _url = _url.split(':')
+            port, db = _url.split('/')
+            return {'host': host, 'port': port, 'db': db, 'password': password}
+        else:
+            host, _url = _url.split(':')
+            port, db = _url.split('/')
+            return {'host': host, 'port': port, 'db': db, 'password': None}
+
+    @staticmethod
     def get_hash_ring_map(redis_obj=None):
         """
         获取manager redis中的map,并格式化

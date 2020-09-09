@@ -21,7 +21,7 @@ class ServerInfoModel(ServerInfoBase):
         :param _id:
         :return:
         """
-        return cls.info([cls.id == _id, cls.master_server_id == _id], cls.query_list)
+        return cls.info_all_or([cls.id == _id, cls.master_server_id == _id], cls.query_list)
 
     @classmethod
     def get_all_info(cls):
@@ -86,7 +86,7 @@ class ServerInfoModel(ServerInfoBase):
         query_list = [cls.host == info_dict['host'],
                       cls.port == info_dict['port'],
                       cls.master_server_id == info_dict['master_server_id'],
-                      cls.db_name == info_dict['db']]
+                      cls.db == info_dict['db']]
         return cls.update(query_list, {'state': 2})
 
     @classmethod

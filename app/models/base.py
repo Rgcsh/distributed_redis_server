@@ -188,6 +188,23 @@ class BaseModel(object):
         )
 
     @classmethod
+    def info_all_or(cls, search_list, field_list):
+        """
+        查询所有数据的全部字段(不利于IO,尽量只查需要的字段)，再取部分值
+        :param search_list: 搜索列表
+        :param field_list: 返回字段列表
+        :return:
+        """
+        ins = cls.query.filter(or_(*search_list)).all()
+        if ins is None:
+            return None
+        return list(
+            map(
+                lambda x: x.to_dict(field_list), ins
+            )
+        )
+
+    @classmethod
     def info_all_and_query(cls, search, *field):
         """
 

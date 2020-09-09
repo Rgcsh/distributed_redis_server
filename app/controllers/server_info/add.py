@@ -39,7 +39,7 @@ class ServerInfoAddController(BaseController):
 
         POST: /server_info/add
         """
-        if params.get('cache_type') == 2 and params.get('master_server_id') is not None:
+        if params.get('cache_type') == 2 and params.get('master_server_id') is None:
             return json_fail(CodeDict.field_val_err, '主服务器ID必填')
         if params.get('cache_type') == 1 and params.get('master_server_id'):
             return json_fail(CodeDict.field_val_err, '主服务器ID不能填')
