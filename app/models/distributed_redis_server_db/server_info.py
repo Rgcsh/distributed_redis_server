@@ -21,7 +21,12 @@ class ServerInfoModel(ServerInfoBase):
         :param _id:
         :return:
         """
-        return cls.info_all_or([cls.id == _id, cls.master_server_id == _id], cls.query_list)
+        ins = cls.info_all_or([cls.id == _id, cls.master_server_id == _id])
+        _list = []
+        for obj in ins:
+            if obj.state == 1:
+                _list.append(obj.to_dict(cls.query_list))
+        return _list
 
     @classmethod
     def get_all_info(cls):
@@ -53,7 +58,7 @@ class ServerInfoModel(ServerInfoBase):
         query_list = cls.warn_field_list
         if field_list:
             query_list += field_list
-        return cls.info([cls.id == _id], query_list)
+        return cls.info([cls.id == _id, cls.state == 1], query_list)
 
     @classmethod
     def get_connect_master_server_info(cls):
@@ -86,7 +91,8 @@ class ServerInfoModel(ServerInfoBase):
         query_list = [cls.host == info_dict['host'],
                       cls.port == info_dict['port'],
                       cls.master_server_id == info_dict['master_server_id'],
-                      cls.db == info_dict['db']]
+                      cls.db == info_dict['db'],
+                      cls.state == 1]
         return cls.update(query_list, {'state': 2})
 
     @classmethod
