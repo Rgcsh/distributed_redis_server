@@ -30,7 +30,7 @@ def corn_check_node():
         error_list = []
         for server_info in all_server_info_list:
             if server_info.get('cache_type') == 1:
-                master_redis_obj = RedisAction.get_redis_obj(server_info)
+                master_redis_obj = RedisAction.get_redis_obj(**server_info)
                 hash_ring_map = RedisAction.get_hash_ring_map(master_redis_obj)
                 real_node_list = list(set(hash_ring_map.values()))
 

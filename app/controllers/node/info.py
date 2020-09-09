@@ -20,6 +20,7 @@ class NodeInfoController(BaseController):
     def post(self):
         """ 获取节点 相关信息 接口
         调用 info 命令
+        todo: 可能会被删除此功能
         POST: /node/info
         """
         hash_ring_map = RedisAction.get_hash_ring_map()
