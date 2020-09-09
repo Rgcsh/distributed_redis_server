@@ -97,3 +97,13 @@ class ServerInfoModel(ServerInfoBase):
         :return:
         """
         cls.info_first_and_query([cls.id == _id], cls.master_server_id)
+
+    @classmethod
+    def check_exist(cls, params):
+        """
+        检查是否存在
+        :param params:
+        :return:
+        """
+        _dict = {'host': params['host'], 'port': params['port'], 'db': params['db'], 'state': 1}
+        return cls.exist(_dict)

@@ -57,6 +57,11 @@ class ServerInfoAddController(BaseController):
         :param params:
         :return:
         """
+        logger.info('检查主服务器是否重复')
+        if params.get('cache_type') == 1:
+            if ServerInfoModel.check_exist(params):
+                raise ApiException(500, '节点已存在!')
+
         logger.info('检查是否添加 缓存节点')
         master_server_id = params.get('master_server_id')
         if not master_server_id:
