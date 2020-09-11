@@ -1,7 +1,7 @@
 //本地使用
 serverUrl = '//127.0.0.1:5000/'
 serverUrl_user = serverUrl + 'user/'
-serverUrl_fund_info = serverUrl + 'fund_info/'
+serverUrl_server_info = serverUrl + 'server_info/'
 serverUrl_order = serverUrl + 'order/'
 serverUrl_weburl = serverUrl+ 'upload/tender_manage/'
 

@@ -1,0 +1,310 @@
+<style type="text/css">
+	.shortselect {
+		background: #fafdfe;
+		height: 28px;
+		width: 180px;
+		line-height: 28px;
+		border: 1px solid #9bc0dd;
+		-moz-border-radius: 2px;
+		-webkit-border-radius: 2px;
+		border-radius: 2px;
+		/* margin-left: 1%; */
+		margin-top: 1%;
+	}
+
+	.detail_info_span_name {
+		color: #c31919;
+	}
+
+	.detail_info_span_val {
+		color: #109a61;
+	}
+
+	#detail_info_out {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		width: 40%;
+		transform: translate(-50%, -50%);
+		height: 80%;
+		overflow-y: scroll;
+		background: #fff;
+		box-shadow: rgb(178, 179, 181) 5px 5px 15px;
+	}
+
+	#detail_info_in {
+		margin: 20px;
+	}
+
+	#select_span {
+		margin-left: 1%;
+		color: #1d5388;
+		font-size: 16px;
+	}
+</style>
+
+<div class="container-fluid check_table_user_result_div" style="padding-right: 0px;padding-left: 0px;">
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<span id="select_span">请选择服务器:</span>
+			<select name="bbxb" id="selecte" class="shortselect">
+			</select>
+
+			<table class="table table-hover table-condensed table-bordered" style="margin-top: 10px;">
+				<thead style="background-color:#eeeeee;">
+					<tr>
+						<th style="text-align:center;">
+							id
+						</th>
+						<th style="text-align:center;">
+							备注
+						</th>
+						<th style="text-align:center;">
+							服务器类型
+						</th>
+						<th style="text-align:center;">
+							服务状态
+						</th>
+						<th style="text-align:center;">
+							內存阈值
+						</th>
+						<th style="text-align:center;">
+							已用内存
+						</th>
+						<th style="text-align:center;">
+							设置的最大内存
+						</th>
+						<th style="text-align:center;">
+							其他信息
+						</th>
+						<th style="text-align:center;">
+							操作
+						</th>
+					</tr>
+				</thead>
+				<tbody style="background-color: #fafafa;" id="search_normal_user_detail">
+
+				</tbody>
+			</table>
+
+		</div>
+	</div>
+</div>
+
+<div id="detail_info_out" style="display: none;">
+	<div id="detail_info_in">
+	</div>
+</div>
+<script src="others/My97DatePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+	$(function() {
+		// 点击弹窗其他地方 弹窗消失
+		$(document).click(
+			function(event) {
+				var iss = $('#detail_info_out').css('display')
+				target_id = event.target.id
+				if (target_id != 'detail_info_out' && target_id != 'detail_info_in' && iss == 'block' && target_id.indexOf(
+						"show_detail_id_") == -1) {
+					$('#detail_info_out').hide();
+				}
+			}
+		);
+	})
+
+	function load_server_info() {
+		//进入页面后 调用接口 加载 主服务器信息
+		$.ajax({
+			url: serverUrl_server_info + "master_server_list",
+			type: 'get',
+			dataType: "json",
+			data: {
+				token: $.cookie('token')
+			},
+			success: function(data) {
+				if (data.respCode == 200) {
+					var result_data = data.result
+					$('#selecte').empty();
+					var str_list = []
+					for (var i = 0; i < result_data.length; i++) {
+						var id = result_data[i]['id'];
+						var note = result_data[i]['note'];
+						str_list.push('<option value="' + id + '">' + note + '</option>')
+					}
+					var str = str_list.join("");
+					$('#selecte').append(str);
+					load_info_list(result_data[0]['id'])
+				} else {
+					hide_popover('#selecte', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#selecte', '程序错误')
+			}
+		});
+	}
+	load_server_info()
+
+	$('#selecte').change(function() {
+		var opt = $("#selecte").val();
+		load_info_list(opt)
+	});
+
+
+	function load_info_list(_id) {
+		//获取 某一个主服务 及相关业务节点 的相关信息
+		$.ajax({
+			url: serverUrl_server_info + "info_list",
+			type: 'get',
+			dataType: "json",
+			data: {
+				token: $.cookie('token'),
+				id: _id
+			},
+			success: function(data) {
+				if (data.respCode == 200) {
+					var result_data = data.result
+					$('#search_normal_user_detail').empty();
+					for (var i = 0; i < result_data.length; i++) {
+						var id = result_data[i]['id'];
+						var note = result_data[i]['note'];
+						var state = result_data[i]['state'];
+						var state_dict = {
+							1: '正常',
+							2: '失效',
+							3: '已删除'
+						}
+						var cache_type = result_data[i]['cache_type'];
+
+						if (state == 2) {
+							var sate_str = '<span style="color:red">' + state_dict[state] + '</span>'
+						} else {
+							var sate_str = '<span style="color:green">' + state_dict[state] + '</span>'
+						}
+						var cache_type_dict = {
+							1: '主服务',
+							2: '缓存服务'
+						}
+						var cache_type_str = cache_type_dict[cache_type]
+						var memory_threshold = result_data[i]['memory_threshold'];
+						if (memory_threshold == null) {
+							memory_threshold = ''
+						}
+
+						var used_memory_human = result_data[i]['used_memory_human'];
+						var maxmemory_human = result_data[i]['maxmemory_human'];
+						if (maxmemory_human == '0B') {
+							maxmemory_human = '<span style="color:#d2391f;">前往对应服务器尽快设置</span>'
+						}
+
+						var detail_info = result_data[i];
+						detail_info_str = JSON.stringify(detail_info)
+
+						var str = '<tr><td align="center">' +
+							id +
+							'</td><td align="center"><input class="fund_info_input" type="text" id="server_info_note' + id +
+							'" value="' + note + '"/>' +
+							'</td><td align="center">' +
+							cache_type_str +
+							'</td><td align="center">' +
+							sate_str +
+							'</td><td align="center"><input class="fund_info_input" type="text" id="server_info_memory_threshold' + id +
+							'" value="' + memory_threshold + '"/>' +
+							'</td><td align="center">' +
+							used_memory_human +
+							'</td><td align="center">' +
+							maxmemory_human +
+							'</td><td align="center" class="show_class">' +
+							'<span id="detail_' + id + '" style="display:none">' + detail_info_str + '</span>' +
+							'<button type="button"' +
+							'" class="btn btn-default btn-primary change_button" id=show_detail_id_"' + id +
+							'" style="margin-left: 16%;" onclick="detail_info_show(\'' +
+							id + '\')">显示</button>' +
+							'</td><td align="center">' +
+							'<button type="button" id="change_button_' + id +
+							'" class="btn btn-default btn-primary change_button" style="margin-left: 16%;" onclick="click_change(\'' +
+							id + '\')">修改</button></label>' +
+							'<button type="button" id="change_button_' + id +
+							'" class="btn btn-default btn-primary change_button" style="margin-left: 3%;" onclick="click_delete(\'' +
+							id + '\')">删除</button></label>' +
+							'</td></tr>'
+						$('#search_normal_user_detail').append(str);
+
+					}
+				} else {
+					hide_popover('#search_normal_user_detail', data.respMsg)
+				}
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus)
+				hide_popover('#search_normal_user_detail', '程序错误')
+			}
+		});
+	}
+
+	function detail_info_show(id) {
+		detail_info_str = $('#detail_' + id).text()
+		detail_info = JSON.parse(detail_info_str);
+		for (var p in detail_info) {
+			$('#detail_info_in').append('<span style="color: #c31919;">' + p + ':</span><span style="color: #109a61;">' +
+				detail_info[p] + '</span></br>')
+		}
+		$('#detail_info_out').show()
+	}
+
+	// 删除服务
+	function click_delete(id) {
+		var confirm = window.confirm('此功能会删除服务,你确定吗?')
+		if (confirm == true) {
+			$.ajax({
+				url: serverUrl_server_info + "remove",
+				type: 'post',
+				dataType: "json",
+				data: {
+					"token": $.cookie('token'),
+					"id": id
+				},
+				success: function(data) {
+					if (data.respCode == 200) {
+						alert('删除成功')
+					} else {
+						alert(data.respMsg)
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert(程序错误, 请联系管理员)
+				}
+			});
+		}
+	}
+	// 修改基础信息
+	function click_change(id) {
+		note_val = $('#server_info_note' + id).val()
+		memory_threshold = $('#server_info_memory_threshold' + id).val()
+		if (note_val != '' && memory_threshold != '') {
+			$.ajax({
+				url: serverUrl_server_info + "update",
+				type: 'post',
+				dataType: "json",
+				data: {
+					"token": $.cookie('token'),
+					"note": note_val,
+					"memory_threshold": memory_threshold,
+					"id": id
+				},
+				success: function(data) {
+					if (data.respCode == 200) {
+						alert('修改成功')
+					} else {
+						alert(data.respMsg)
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert(程序错误, 请联系管理员)
+				}
+			});
+		} else {
+			alert('请填写参数')
+		}
+	}
+</script>

@@ -24,7 +24,7 @@ class ServerInfoModel(ServerInfoBase):
         ins = cls.info_all_or([cls.id == _id, cls.master_server_id == _id])
         _list = []
         for obj in ins:
-            if obj.state == 1:
+            if obj.state != 3:
                 _list.append(obj.to_dict(cls.query_list))
         return _list
 

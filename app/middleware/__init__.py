@@ -8,8 +8,10 @@ Usage:
 
 """
 from .log import LogMiddleWare
+from .token import TokenMiddleWare
 
 # 中间件
 MIDDLEWARE = [
     LogMiddleWare,
+    TokenMiddleWare
 ]

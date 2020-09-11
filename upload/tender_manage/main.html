@@ -48,16 +48,10 @@
 					$('#content_html').load('user_detail.html');
 				});
 
-				//基金基础信息
-				$('#fund_info').click(function() {
+				// 服务器相关信息
+				$('#server_info').click(function() {
 				    $('#content_html').empty()
-					$('#content_html').load('fund_info.html');
-				});
-				
-				//交易订单
-				$('#order').click(function() {
-				    $('#content_html').empty()
-					$('#content_html').load('order.html');
+					$('#content_html').load('server_info.html');
 				});
 				
 				$('#exit_button').click(function() {
@@ -154,8 +148,7 @@
 						<li style="background-color: white;height: 50px;">
 						</li>
 						<li id='user_detail_start'><span class="glyphicon glyphicon-star" aria-hidden="true"></span>个人中心</li>
-						<li id="fund_info"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>基金基础信息</li>
-						<li id="order"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>交易订单</li>
+						<li id="server_info"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>服务器信息</li>
 					</ul>
 					<!--菜单栏结束-->
 				</div>

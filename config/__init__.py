@@ -29,6 +29,8 @@ class Config:
         """
         # 是否debug
         app.config['DEBUG'] = False
+        app.config['CORS_ENABLE'] = True
+
         # 中间件
         app.config['MIDDLEWARE'] = [
             'app.middleware.log.LogMiddleWare',
