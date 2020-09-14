@@ -318,7 +318,7 @@ class BaseModel(object):
     @classmethod
     def update(cls, search: list, data: dict, auto_commit=True, session=False):
         """
-        更新符合条件的多条数据
+        更新符合条件(且 条件)的多条数据
 
         :param search:搜素条件
         :param data:需要修改的数据
@@ -334,6 +334,35 @@ class BaseModel(object):
         try:
             session.execute(
                 update(cls).where(and_(*search)).values(**data)
+            )
+            if auto_commit:
+                session.commit()
+        except SQLAlchemyError:
+            logger.error(traceback.format_exc())
+            session.rollback()
+            return False
+
+        return True
+
+    @classmethod
+    def update_or(cls, search: list, data: dict, auto_commit=True, session=False):
+        """
+        更新符合条件(或条件)的多条数据
+
+        :param search:搜素条件
+        :param data:需要修改的数据
+        :param auto_commit:是否自动提交
+        :param session:
+        :return:
+
+        Usage:
+        >>> update([model.type == 1, model.status == 1], {'val':1}, auto_commit=True)
+        """
+        if not session:
+            session = db.session
+        try:
+            session.execute(
+                update(cls).where(or_(*search)).values(**data)
             )
             if auto_commit:
                 session.commit()

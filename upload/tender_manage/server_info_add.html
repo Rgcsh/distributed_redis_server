@@ -87,9 +87,6 @@
 		border-radius: 2px;
 	}
 	
-	#master_server_id_li{
-		display: none;
-	}
 </style>
 
 <div id="fund_info_center">
@@ -250,8 +247,8 @@
 	// 单选框 选中触发事件
 	$('input:radio[name="cache_type"]').click(function() {
 		var checkValue = $('input:radio[name="cache_type"]:checked').val();
-		if (checkValue == 1) {
-			//主服务被选中,显示 对应服务器
+		if (checkValue == 2) {
+			//缓存节点被选中,显示 对应主服务器
 			$('#master_server_id_li').show()
 		}else{
 			// 不显示 对应服务器

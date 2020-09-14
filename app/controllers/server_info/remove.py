@@ -41,7 +41,8 @@ class ServerInfoNodeRemoveController(BaseController):
         cache_type = server_info_dict['cache_type']
 
         self._post(server_info_dict)
-        logger.info('删除 mysql中数据')
+
+        logger.info(f'删除 mysql中数据,cache_type:{cache_type}')
         if not ServerInfoModel.del_server(_id, cache_type):
             return json_fail(CodeDict.db_error)
         return json_success()
@@ -56,10 +57,10 @@ class ServerInfoNodeRemoveController(BaseController):
         """
         node_url = f"{params['host']}:{params['port']}/{params['db']}"
         cache_type = params['cache_type']
-        logger.info("判断节点 IP 是否存在")
+        logger.info("开始删除redis中相关数据")
 
         if cache_type == 1:
-            # 主服务器
+            logger.info('发现 为主服务器,删除redis中相关数据')
             redis_obj = RedisAction.get_redis_obj(**params)
             redis_obj.delete(HASH_RING_MAP)
         else:

@@ -132,7 +132,9 @@
 					}
 					var str = str_list.join("");
 					$('#selecte').append(str);
-					load_info_list(result_data[0]['id'])
+					if (result_data.length > 0) {
+						load_info_list(result_data[0]['id'])
+					}
 				} else {
 					hide_popover('#selecte', data.respMsg)
 				}

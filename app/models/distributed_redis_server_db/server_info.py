@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # (C) Wu Dong, 2018
 # All rights reserved
+from copy import deepcopy
 
 from .entity import ServerInfoBase
 
@@ -55,7 +56,7 @@ class ServerInfoModel(ServerInfoBase):
         :param _id:
         :return:
         """
-        query_list = cls.warn_field_list
+        query_list = deepcopy(cls.warn_field_list)
         if field_list:
             query_list += field_list
         return cls.info([cls.id == _id, cls.state == 1], query_list)
@@ -79,7 +80,7 @@ class ServerInfoModel(ServerInfoBase):
         query_list = [cls.id == _id]
         if cache_type == 1:
             query_list += [cls.master_server_id == _id]
-        return cls.update(query_list, {'state': 3})
+        return cls.update_or(query_list, {'state': 3})
 
     @classmethod
     def update_state(cls, info_dict):
