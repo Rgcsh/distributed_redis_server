@@ -54,6 +54,12 @@
 					$('#content_html').load('server_info.html');
 				});
 				
+				// 添加服务器
+				$('#server_info_add').click(function() {
+				    $('#content_html').empty()
+					$('#content_html').load('server_info_add.html');
+				});
+				
 				$('#exit_button').click(function() {
 					cookies_remove()
 					window.location.href = serverUrl_weburl + "index.html";
@@ -149,6 +155,7 @@
 						</li>
 						<li id='user_detail_start'><span class="glyphicon glyphicon-star" aria-hidden="true"></span>个人中心</li>
 						<li id="server_info"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>服务器信息</li>
+						<li id="server_info_add"><span class="glyphicon glyphicon-check" aria-hidden="true"></span>添加服务器</li>
 					</ul>
 					<!--菜单栏结束-->
 				</div>
