@@ -29,13 +29,13 @@ class ServerInfoModel(ServerInfoBase):
                 _list.append(obj.to_dict(cls.query_list))
         return _list
 
-    @classmethod
-    def get_all_info(cls):
+    @staticmethod
+    def get_all_info():
         """
         根据id查询数据list
         :return:
         """
-        return cls.info_all([cls.state == 1], cls.query_list)
+        return ServerInfoModel.info_all([ServerInfoModel.state == 1], ServerInfoModel.query_list)
 
     @classmethod
     def get_master_server_info(cls):

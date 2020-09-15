@@ -26,7 +26,6 @@ def corn_check_memory():
     logger.info('corn_check_node job start executed!!!!')
     # 读取上下文
     with scheduler.app.app_context():
-        # todo
         all_server_info_list = ServerInfoModel.get_all_info()
         logger.info(f'获取 所有服务器信息成功')
         error_list = []

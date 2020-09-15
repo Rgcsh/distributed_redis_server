@@ -1,17 +1,17 @@
 //本地后端前端合并使用
-// serverUrl = '//127.0.0.1:5000/'
-// serverUrl_user = serverUrl + 'user/'
-// serverUrl_server_info = serverUrl + 'server_info/'
-// serverUrl_order = serverUrl + 'order/'
-// serverUrl_weburl = serverUrl+ 'upload/tender_manage/'
+ serverUrl = '//127.0.0.1:5000/'
+ serverUrl_user = serverUrl + 'user/'
+ serverUrl_server_info = serverUrl + 'server_info/'
+ serverUrl_order = serverUrl + 'order/'
+ serverUrl_weburl = serverUrl+ 'upload/tender_manage/'
 
 //本地后端前端分离使用
-serverUrl = '//127.0.0.1:8848/'
-serverWebUrl = '//127.0.0.1:5000/'
-serverUrl_user = serverWebUrl + 'user/'
-serverUrl_server_info = serverWebUrl + 'server_info/'
-serverUrl_order = serverUrl + 'order/'
-serverUrl_weburl = serverUrl + 'tender_manage/'
+//serverUrl = '//127.0.0.1:8848/'
+//serverWebUrl = '//127.0.0.1:5000/'
+//serverUrl_user = serverWebUrl + 'user/'
+//serverUrl_server_info = serverWebUrl + 'server_info/'
+//serverUrl_order = serverUrl + 'order/'
+//serverUrl_weburl = serverUrl + 'tender_manage/'
 
 //	弹窗消失
 function hide_popover(name, get_text) {

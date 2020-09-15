@@ -20,7 +20,6 @@ def corn_check_node():
 
     定时任务 检查每个 redis node 是否可用
     几次不行之后 则 从集群中移除节点,并发送邮件给管理员
-    todo:添加查询db的缓存
     """
     logger.info('corn_check_node job start executed!!!!')
     # 读取上下文
