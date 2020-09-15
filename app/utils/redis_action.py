@@ -149,7 +149,7 @@ class RedisAction:
         :return:
         """
         try:
-            memory_dict = redis_obj.info('Memory')
+            memory_dict = redis_obj.info()
             # 已经使用内存容量
             used_memory = memory_dict.get('used_memory')
             # 设置最大内存容量

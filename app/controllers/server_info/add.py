@@ -62,6 +62,12 @@ class ServerInfoAddController(BaseController):
             if ServerInfoModel.check_exist(params):
                 raise ApiException(500, '节点已存在!')
 
+        logger.info('检查节点能否使用')
+        node_redis_obj = RedisAction.get_redis_obj(**params)
+        check_result, _str = RedisAction.check_redis_status(node_redis_obj)
+        if not check_result:
+            raise ApiException(500, f'节点无法连接:{_str}')
+
         logger.info('检查是否添加 缓存节点')
         master_server_id = params.get('master_server_id')
         if not master_server_id:
@@ -82,12 +88,6 @@ class ServerInfoAddController(BaseController):
         real_node_list = list(set(hash_ring_map.values()))
         if real_node_list and f'{host}:{port}' in str(real_node_list):
             raise ApiException(500, '节点已存在')
-
-        logger.info('检查节点能否使用')
-        node_redis_obj = RedisAction.get_redis_obj(**params)
-        check_result, _str = RedisAction.check_redis_status(node_redis_obj)
-        if not check_result:
-            raise ApiException(500, f'节点无法连接:{_str}')
 
         logger.info('添加节点到hash')
         real_node_list.append(new_node)

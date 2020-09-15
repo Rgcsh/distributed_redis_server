@@ -41,6 +41,21 @@
 		color: #1d5388;
 		font-size: 16px;
 	}
+
+	.span_note {
+		color: #bd8181;
+		font-size: 15px;
+	}
+
+	.span_detail_info_key {
+		color: #c31919;
+		font-size: 17px;
+	}
+
+	.span_detail_info_val {
+		color: #109a61;
+		font-size: 17px;
+	}
 </style>
 
 <div class="container-fluid check_table_user_result_div" style="padding-right: 0px;padding-left: 0px;">
@@ -97,14 +112,123 @@
 </div>
 <script src="others/My97DatePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
 <script type="text/javascript">
+	var redis_info_dict = {
+		"一般 Redis 服务器信息": "server", //
+		"Redis服务器版本": "redis_version",
+		"Git SHA1": "redis_git_sha1",
+		"Git dirty flag": "redis_git_dirty",
+		"Redis 服务器的宿主操作系统": "os",
+		"架构（32 或 64 位）": "arch_bits",
+		"Redis 所使用的事件处理机制": "multiplexing_api",
+		"编译 Redis 时所使用的 GCC 版本": "gcc_version",
+		"服务器进程的 PID": "process_id",
+		"Redis 服务器的随机标识符（用于 Sentinel 和集群）": "run_id",
+		"TCP/IP 监听端口": "tcp_port",
+		"自 Redis 服务器启动以来，经过的秒数": "uptime_in_seconds",
+		"自 Redis 服务器启动以来，经过的天数": "uptime_in_days",
+		"以分钟为单位进行自增的时钟，用于 LRU 管理": "lru_clock",
+		"已连接客户端信息": "clients", //
+		"已连接客户端的数量(不包括通过从属服务器连接的客户端)": "connected_clients",
+		"当前连接的客户端当中，最长的输出列表": "client_recent_max_output_buffer",
+		"当前连接的客户端当中，最大输入缓存": "client_recent_max_input_buffer",
+		"正在等待阻塞命令（BLPOP、BRPOP、BRPOPLPUSH）的客户端的数量": "blocked_clients",
+		"内存信息": "memory", //
+		"由 Redis 分配器分配的内存总量，以字节（byte）为单位": "used_memory",
+		"以人类可读的格式返回 Redis 分配的内存总量": "used_memory_human",
+		"从操作系统的角度，返回 Redis 已分配的内存总量（俗称常驻集大小）": "used_memory_rss",
+		"Redis 的内存消耗峰值（以字节为单位）": "used_memory_peak",
+		"以人类可读的格式返回Redis的内存消耗峰值": "used_memory_peak_human",
+		"Lua 引擎所使用的内存大小(以字节为单位)": "used_memory_lua",
+		"used_memory_rss和used_memory之间的比率": "mem_fragmentation_ratio",
+		"在编译时指定的,Redis 所使用的内存分配器": "mem_allocator",
+		"RDB 和 AOF 的持久化存储相关信息": "Persistence", //
+		"服务器是否正在载入持久化rdb文件": "loading",
+		"自上次rdb持久化以来发生改变的数值": "rdb_changes_since_last_save",
+		"服务器是否正在创建rdb文件": "rdb_bgsave_in_progress",
+		"最后一次成功rdb持久化的时间戳": "rdb_last_save_time",
+		"最后一次rdb持久化是否成功": "rdb_last_bgsave_status",
+		"最后一次成功生成rdb文件耗时秒数": "rdb_last_bgsave_time_sec",
+		"当前bgsave已耗费的时间（如果有）": "rdb_current_bgsave_time_sec",
+		"上次rbd保存操作期间写时复制分配的字节大小": "rdb_last_cow_size",
+		"aof功能是否开启": "aof_enabled",
+		"标识aof的rewrite操作是否在进行中": "aof_rewrite_in_progress",
+		"标识是否将要在rdb save操作结束后执行": "aof_rewrite_scheduled",
+		"最后一次aof rewrite耗费的时长": "aof_last_rewrite_time_sec",
+		"当前rewrite已耗费的时间（如果有）": "aof_current_rewrite_time_sec",
+		"最后一次bgrewrite是否成功": "aof_last_bgrewrite_status",
+		"上次aof写入状态": "aof_last_write_status",
+		"上次AOF重写操作期间写时复制分配的大小（以字节为单位）": "aof_last_cow_size",
+		"一般统计信息": "stats", //
+		"自启动起连接过的总数": "total_connections_received",
+		"自启动起运行命令的总数": "total_commands_processed",
+		"每秒执行的命令个数": "instantaneous_ops_per_sec",
+		"从网络读取的总字节数": "total_net_input_bytes",
+		"写入网络的总字节数": "total_net_output_bytes",
+		"网络读取速率KB/sec": "instantaneous_input_kbps",
+		"网络写入速率KB/sec": "instantaneous_output_kbps",
+		"因为最大客户端连接数限制，而导致被拒绝连接的个数": "rejected_connections",
+		"给从节点完全同步的数量": "sync_full",
+		"接受的同步请求数量": "sync_partial_ok",
+		"拒绝的同步请求数量": "sync_partial_err",
+		"自启动起过期的key的总数": "expired_keys",
+		"过期key占总key比率": "expired_stale_perc",
+		"过期计数": "expired_time_cap_reached_count",
+		"因为内存大小限制，而被驱逐出去的键的个数": "evicted_keys",
+		"在main dictionary(todo)中成功查到的key个数": "keyspace_hits",
+		"同上，未查到的key的个数": "keyspace_misses",
+		"发布/订阅频道数": "pubsub_channels",
+		"发布/订阅模式数": "pubsub_patterns",
+		"上次的fork操作使用的时间(单位ms)": "latest_fork_usec",
+		"是否已经缓存了到该地址的连接": "migrate_cached_sockets",
+		"从服务器中到期key数量": "slave_expires_tracked_keys",
+		"主动垃圾碎片整理命中次数 该值与ActiveDefrag机制中源码stat_active_defrag_hits相同，用于计算内存碎片率，当碎片率达到指定值范围开启自动整理功能": "active_defrag_hits",
+		"主动垃圾碎片整理未命中": "active_defrag_misses",
+		"主动垃圾碎片整理key命中次数": "active_defrag_key_hits",
+		"主动垃圾碎片整理key未命中次数": "active_defrag_key_misses",
+		"主/从复制信息": "Replication", //
+		"当前实例的角色master还是slave": "role",
+		"slave的数量": "connected_slaves",
+		"主实例启动随机字符串": "master_replid",
+		"主实例启动随机字符串2": "master_replid2",
+		"主从同步偏移量,此值如果和上面的offset相同说明主从一致没延迟，与master_replid可被用来标识主实例复制流中的位置": "master_repl_offset",
+		"主从同步偏移量2,此值如果和上面的offset相同说明主从一致没延迟": "second_repl_offset",
+		"复制缓冲区是否开启": "repl_backlog_active",
+		"复制缓冲区大小": "repl_backlog_size",
+		"复制缓冲区里偏移量的大小": "repl_backlog_first_byte_offset",
+		"此值等于 master_repl_offset - repl_backlog_first_byte_offset,该值不会超过repl_backlog_size的大小": "repl_backlog_histlen",
+		"CPU 计算量统计信息": "Cpu", //
+		"Redis服务消耗的系统cpu": "used_cpu_sys",
+		"Redis服务消耗的用户cpu": "used_cpu_user",
+		"后台进程占用的系统cpu": "used_cpu_sys_children",
+		"后台进程占用的用户cpu": "used_cpu_user_children",
+		"集群统计信息": "Cluster", //
+		"实例是否启用集群模式 ": "cluster_enabled",
+		"各个数据库（0-15）的 key 的数量，带有生存期的 key 的数量，平均存活时间": "Keyspace", //
+		"db0": "db0",
+		"db1": "db1",
+		"db2": "db2",
+		"db3": "db3",
+		"db4": "db4",
+		"db5": "db5",
+		"db6": "db6",
+		"db7": "db7",
+		"db8": "db8",
+		"db9": "db9",
+		"db10": "db10",
+		"db11": "db11",
+		"db12": "db12",
+		"db13": "db13",
+		"db14": "db14",
+		"db15": "db15",
+	}
 	$(function() {
 		// 点击弹窗其他地方 弹窗消失
 		$(document).click(
 			function(event) {
 				var iss = $('#detail_info_out').css('display')
-				target_id = event.target.id
+				var target_id = event.target.id
 				if (target_id != 'detail_info_out' && target_id != 'detail_info_in' && iss == 'block' && target_id.indexOf(
-						"show_detail_id_") == -1) {
+						"show_detail_id_") == -1 && event.target.nodeName != 'SPAN') {
 					$('#detail_info_out').hide();
 				}
 			}
@@ -219,8 +343,8 @@
 							'</td><td align="center" class="show_class">' +
 							'<span id="detail_' + id + '" style="display:none">' + detail_info_str + '</span>' +
 							'<button type="button"' +
-							'" class="btn btn-default btn-primary change_button" id=show_detail_id_"' + id +
-							'" style="margin-left: 16%;" onclick="detail_info_show(\'' +
+							'" class="btn btn-default btn-primary change_button" id=show_detail_id_' + id +
+							' style="margin-left: 16%;" onclick="detail_info_show(\'' +
 							id + '\')">显示</button>' +
 							'</td><td align="center">' +
 							'<button type="button" id="change_button_' + id +
@@ -245,11 +369,26 @@
 	}
 
 	function detail_info_show(id) {
+		$('#detail_info_in').text('');
 		detail_info_str = $('#detail_' + id).text()
 		detail_info = JSON.parse(detail_info_str);
-		for (var p in detail_info) {
-			$('#detail_info_in').append('<span style="color: #c31919;">' + p + ':</span><span style="color: #109a61;">' +
-				detail_info[p] + '</span></br>')
+		for (var note in redis_info_dict) {
+			var detail_info_key = redis_info_dict[note]
+			var detail_info_val = detail_info[detail_info_key]
+			if (detail_info_key.startsWith('db') && detail_info_val != undefined) {
+				detail_info_val = JSON.stringify(detail_info_val);
+			}
+			if (detail_info_val != undefined) {
+				$('#detail_info_in').append('<span class="span_note"># ' + note +
+					'</span></br><span class="span_detail_info_key">' + detail_info_key +
+					':</span><span class="span_detail_info_val">' + detail_info_val + '</span></br></br>')
+			} else if (detail_info_val == undefined && detail_info_key.startsWith('db')) {
+				continue
+			} else {
+				$('#detail_info_in').append('<span style="color:blue;font-size:17px;"># ' + note +
+					'</span></br><span style="color:blue;font-size:17px;">' + detail_info_key + '</span></br></br>')
+			}
+
 		}
 		$('#detail_info_out').show()
 	}

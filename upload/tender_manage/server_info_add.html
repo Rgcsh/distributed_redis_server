@@ -157,6 +157,9 @@
 				if (data.respCode == 200) {
 					var result_data = data.result
 					$('#master_server_id_add').empty();
+					if (result_data.length==0){
+						return
+					}
 					var str_list = []
 					for (var i = 0; i < result_data.length; i++) {
 						var id = result_data[i]['id'];
@@ -190,6 +193,7 @@
 
 	// 新增基金基础信息接口
 	$('#server_info_add').on('click', function() {
+		console.log('df')
 		var host = $('#host').val();
 		var port = $('#port').val();
 		var db = $('#db').val();
@@ -199,7 +203,7 @@
 		var cache_type = $("[name='cache_type']:checked").val();
 		var master_server_id = $('#master_server_id_add').val();
 
-		input_json = {
+		var input_json = {
 			port: port,
 			host: host,
 			db: db,
